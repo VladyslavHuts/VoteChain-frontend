@@ -1,19 +1,10 @@
-import React, { Component } from 'react';
-import '../styles/header.css';
+import React, {Component} from 'react';
 
-// Якщо компонент не має пропсів, вказуємо пустий об'єкт {}
-interface HeaderProps {}
-
-class Header extends Component<HeaderProps> {
-    componentDidMount() {
-        const number: number = 42; // визначаємо число з типом "number"
-        console.log("Число:", number); // виводимо в консоль
-    }
-
+class Header extends Component {
     render() {
         return (
-            <div className="header">
-                <p>fdsfsd</p>
+            <div>
+                
             </div>
         );
     }
