@@ -1,0 +1,36 @@
+.header{
+    background-color: #141414;
+    height: 60px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 18px;
+}
+.container{
+    max-width: 1360px;
+    margin: 0 auto;
+}
+.header__wrap{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.header__list{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 80px;
+}
+.header__container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.header__btn{
+    width: 114px;
+    height: 36px;
+    border: solid 3px red;
+    text-align: center;
+    background: #202020;
+    border-radius: 10px;
+}
