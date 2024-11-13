@@ -8,8 +8,8 @@ class Footer extends Component {
         return (
             <div className="footer">
                 <div className="container">
-                    <div className="footer__wrap">
-                        <div className="footer__container">
+                    <div className="footer__container">
+                        <div className="footer__wrap">
                             <ul className="footer__list">
                                 <li className="footer__item">Contacts</li>
                                 <li className="footer__item"><a className="footer__link">Email: support@example.com</a></li>
@@ -22,7 +22,6 @@ class Footer extends Component {
                                         <li className="footer__subitem"><a className="footer__link">GitHub</a></li>
                                     </ul>
                                 </li>
-
                             </ul>
                             <ul className="footer__list">
                                 <li className="footer__item">Documents</li>

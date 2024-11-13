@@ -51,5 +51,27 @@ th, td {
     padding: 0;
     text-align: left;
 }
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../assets/fonts/Montserrat/Montserrat-VariableFont_wght.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+.App{
+    font-family: 'Montserrat', sans-serif;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #111111;
+    color: #E8E8E8;
+}
+.container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+
 
 
