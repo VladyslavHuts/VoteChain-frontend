@@ -3,6 +3,7 @@ import '../styles/footer.css'
 import footer__img from '../assets/images/footer__img.svg';
 
 
+
 class Footer extends Component {
     render() {
         return (

@@ -17,8 +17,8 @@ class Header extends Component {
                                     <li className="header__item">
                                         <Link className="header__link" to="/">VoteChain</Link>
                                     </li>
-                                    <li className="header__item"><a href="">About the platform</a></li>
-                                    <li className="header__item"><a href="">How it works</a></li>
+                                    <li className="header__item"><Link to="">About the platform</Link></li>
+                                    <li className="header__item"><Link to="">How it works</Link></li>
                                     <li className="header__item">
                                         <Link className="header__link" to="/active-votes">Active votes</Link>
                                     </li>
