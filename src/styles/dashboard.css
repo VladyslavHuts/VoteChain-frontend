@@ -1,0 +1,101 @@
+.dashboard{
+    background: url("../assets/images/showcase__background.png") no-repeat center / cover;
+}
+.dashboard__container{
+    padding: 40px 0 50px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+.dashboard__info{
+    width: 670px;
+    height: 234px;
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 3px solid #767676;
+    border-radius: 30px;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(160, 160, 160, 0.2) 100%);
+}
+.dashboard__info-image{
+    width: 180px;
+    height: 194px;
+}
+.dashboard__option{
+    width: 670px;
+    height: 124px;
+    padding: 20px;
+    border: 3px solid #767676;
+    border-radius: 30px;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(160, 160, 160, 0.2) 100%);
+}
+.dashboard__subtitle{
+    margin-bottom: 10px;
+    font-weight: 900;
+    font-size: 24px;
+}
+.dashboard__text{
+    font-weight: 500;
+    font-size: 16px;
+}
+.dashboard__filters{
+    display: flex;
+    justify-content: center;
+    gap: 35px;
+}
+.dashboard__filters-btn{
+    font-weight: 700;
+    font-size: 18px;
+    width: 130px;
+    height: 34px;
+    border: 2px solid cyan;
+    border-radius: 10px;
+    background: linear-gradient(90deg, rgba(21, 238, 227, 0.1) 0%, rgba(225, 1, 255, 0.1) 100%);
+}
+.dashboard__statistics{
+    width: 670px;
+    height: 378px;
+    padding: 20px;
+    border: 3px solid #767676;
+    border-radius: 30px;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(160, 160, 160, 0.2) 100%);
+}
+.dashboard__graph-btns{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.dashboard__graph-btn{
+    border: 2px solid #1F44EB;
+    border-radius: 10px;
+    width: 96px;
+    height: 34px;
+    background: linear-gradient(180deg, rgba(0, 234, 255, 0.5) 0%, rgba(31, 68, 235, 0.5) 100%);
+    font-weight: 700;
+    font-size: 16px;
+}
+.dashboard__statistics-wrapper{
+    display: flex;
+    flex-direction: row;
+}
+.dashboard__graph{
+    width: 523px;
+    height: 300px;
+}
+.dashboard__graph-btns-stat{
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    gap: 50px;
+    margin-right: 18px;
+}
+.dashboard__graph-btn-stat{
+    width: 200px;
+    height: 34px;
+    border: 2px solid #C800FF;
+    border-radius: 10px;
+    background: linear-gradient(133deg, rgba(252, 66, 233, 0.5) 0%, rgba(200, 0, 255, 0.5) 100%);
+    font-weight: 700;
+    font-size: 18px;
+}
