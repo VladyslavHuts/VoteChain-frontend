@@ -1,0 +1,146 @@
+.voting {
+    background: url("../assets/images/voting__background.png") no-repeat left / cover;
+}
+.voting__container {
+    justify-content: center;
+}
+.voting__window {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(160, 160, 160, 0.2) 100%);
+    border-radius: 60px;
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    position: relative;
+    border: solid 3px rgba(160, 160, 160, 0.5);
+}
+.voting__title {
+    margin-top: 20px;
+    margin-left: 30px;
+    align-self: flex-start;
+    font-weight: 700;
+    font-size: 52px;
+    color: #e8e8e8;
+}
+.voting__dates {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    display: flex;
+    flex-direction: column;
+    width: 175px;
+}
+
+.voting__date {
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.date-item {
+    margin-bottom: 16px;
+}
+.voting__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 30px;
+}
+.voting__graph {
+    width: 765px;
+    height: 468px;
+    background: #202020;
+    margin-left: 20px;
+    border: solid 3px rgba(160, 160, 160, 0.5);
+}
+.voting__options {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin: 10px 20px 90px 20px;
+}
+.voting__option {
+    padding: 10px 20px;
+    border: 2px solid #111;
+    border-radius: 100px;
+    width: 535px;
+    background: #202020;
+    font-weight: 700;
+    font-size: 24px;
+    color: #e8e8e8;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.voting__header {
+    display: flex;
+    align-items: center;
+}
+
+.voting__icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    margin-right: 10px;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.voting__icon-wrapper.rotated {
+    transform: rotate(180deg);
+}
+.voting__details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, margin-top 0.3s ease;
+    font-size: 18px;
+    color: #cfcfcf;
+    margin-top: 0;
+}
+.voting__details.expanded {
+    max-height: 300px;
+    margin-top: 10px;
+}
+.voting__option.expanded {
+    border-radius: 30px;
+}
+/* Сховати стандартний вигляд радіобатона */
+.voting__radiobutton {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: 2px solid #111;
+    border-radius: 6px;
+    width: 30px;
+    height: 30px;
+    background: #404040;
+    position: absolute;
+    right: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+.voting__radiobutton:checked::after {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" fill="none"><rect x="1" y="1" width="28" height="28" rx="5" fill="%23B2B2B2" stroke="%23111111" stroke-width="2"/><path d="M21.6478 3L19.8019 5.72126L12.365 16.2283L10.1981 13.2803L8.27197 10.5591L4.5 15.8882L6.42611 18.6094L10.4389 24.2787L12.2847 27L14.2108 24.2787L23.5739 11.0504L25.5 8.32913L21.6478 3Z" fill="black"/></svg>') no-repeat center;
+    background-size: contain;
+}
+
+.voting__btn{
+    border-radius: 20px;
+    width: 300px;
+    height: 80px;
+    border: solid 3px darkblue;
+    background: rgba(18, 18, 18, 0.5);
+    font-weight: 700;
+    font-size: 40px;
+    color: #e8e8e8;
+    margin: 70px 530px;
+}
