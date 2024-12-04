@@ -1,0 +1,15 @@
+.activeVotes {
+    position: relative;
+    z-index: 1;
+}
+
+.activeVotes::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 664px;
+    background: url("../assets/images/showcase__background.png") no-repeat center / cover;
+    z-index: -1;
+}

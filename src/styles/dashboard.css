@@ -1,6 +1,3 @@
-.dashboard{
-    background: url("../assets/images/showcase__background.png") no-repeat center / cover;
-}
 .dashboard__container{
     padding: 40px 0 50px;
     display: flex;
