@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import ComplaintModal from "../components/ComplaintModal";
-import '../styles/card.css';
-import complaint from '../assets/images/complaint.png';
+import Details from "../components/Details";
+import "../styles/card.css";
+import complaint from "../assets/images/complaint.png";
 
 interface CardProps {
     title: string;
@@ -11,16 +12,26 @@ interface CardProps {
     onDetails: () => void;
 }
 
-const Card: React.FC<CardProps> = ({ title, description, imageUrl, onVote, onDetails }) => {
-    const [hovered, setHovered] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false); // Стан для модального вікна
 
-    const openModal = () => {
-        setIsModalOpen(true); // Відкрити модальне вікно
+const Card: React.FC<CardProps> = ({ title, description, imageUrl, onVote }) => {
+    const [hovered, setHovered] = useState(false);
+    const [isComplaintModalOpen, setIsComplaintModalOpen] = useState(false);
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+
+    const openComplaintModal = () => {
+        setIsComplaintModalOpen(true);
     };
 
-    const closeModal = () => {
-        setIsModalOpen(false); // Закрити модальне вікно
+    const closeComplaintModal = () => {
+        setIsComplaintModalOpen(false);
+    };
+
+    const openDetailsModal = () => {
+        setIsDetailsModalOpen(true);
+    };
+
+    const closeDetailsModal = () => {
+        setIsDetailsModalOpen(false);
     };
 
     return (
@@ -32,13 +43,9 @@ const Card: React.FC<CardProps> = ({ title, description, imageUrl, onVote, onDet
                         className="card__button--complaint"
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
-                        onClick={openModal} // Відкриття модального вікна при кліку
+                        onClick={openComplaintModal}
                     >
-                        {hovered ? (
-                            "Complaint"
-                        ) : (
-                            <img src={complaint} alt="Complaint" />
-                        )}
+                        {hovered ? "Complaint" : <img src={complaint} alt="Complaint" />}
                     </button>
                 </div>
             </div>
@@ -52,13 +59,26 @@ const Card: React.FC<CardProps> = ({ title, description, imageUrl, onVote, onDet
                 <button className="card__button card__button--vote" onClick={onVote}>
                     Vote
                 </button>
-                <button className="card__button card__button--details" onClick={onDetails}>
+                <button
+                    className="card__button card__button--details"
+                    onClick={openDetailsModal}
+                >
                     Details
                 </button>
             </div>
 
-            {/* Відображення модального вікна */}
-            {isModalOpen && <ComplaintModal onClose={closeModal} />}
+            {isComplaintModalOpen && <ComplaintModal onClose={closeComplaintModal} />}
+
+            {isDetailsModalOpen && (
+                <Details
+                    isOpen={isDetailsModalOpen}
+                    onClose={closeDetailsModal}
+                    title={title}
+                    description={description}
+                    startDate="01/15/2024"
+                    endDate="02/20/2024"
+                />
+            )}
         </div>
     );
 };
