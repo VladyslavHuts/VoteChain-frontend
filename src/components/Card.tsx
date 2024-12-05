@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import ComplaintModal from "../components/ComplaintModal";
 import '../styles/card.css';
-import сomplaint from '../assets/images/complaint.png';
+import complaint from '../assets/images/complaint.png';
 
 interface CardProps {
     title: string;
@@ -12,6 +13,15 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ title, description, imageUrl, onVote, onDetails }) => {
     const [hovered, setHovered] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false); // Стан для модального вікна
+
+    const openModal = () => {
+        setIsModalOpen(true); // Відкрити модальне вікно
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false); // Закрити модальне вікно
+    };
 
     return (
         <div className="card">
@@ -22,18 +32,19 @@ const Card: React.FC<CardProps> = ({ title, description, imageUrl, onVote, onDet
                         className="card__button--complaint"
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
+                        onClick={openModal} // Відкриття модального вікна при кліку
                     >
                         {hovered ? (
                             "Complaint"
                         ) : (
-                            <img src={сomplaint} alt="Complaint"/>
+                            <img src={complaint} alt="Complaint" />
                         )}
                     </button>
                 </div>
             </div>
             <div className="card__main">
                 <div className="card__info">
-                    <img src={imageUrl} alt={title} className="card__image"/>
+                    <img src={imageUrl} alt={title} className="card__image" />
                     <p className="card__description">{description}</p>
                 </div>
             </div>
@@ -45,6 +56,9 @@ const Card: React.FC<CardProps> = ({ title, description, imageUrl, onVote, onDet
                     Details
                 </button>
             </div>
+
+            {/* Відображення модального вікна */}
+            {isModalOpen && <ComplaintModal onClose={closeModal} />}
         </div>
     );
 };
