@@ -13,14 +13,16 @@
     font-size: 32px;
     color: #fff;
 }
-.account__myVotes{
+.account__button {
     margin-right: 76px;
-}
-.account__created{
-    margin-right: 76px;
-    border-radius: 20px 20px 0 0;
-    background: #5a4e6e;
+    border: none;
     padding: 10px 24px 18px;
+    border-radius: 20px 20px 0 0;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+}
+.account__button.active {
+    background: #5a4e6e;
 }
 .account__window{
     background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(160, 160, 160, 0.2) 100%);
@@ -90,20 +92,47 @@
     border-radius: 14px;
     width: 140px;
     height: 40px;
-    background: linear-gradient(134deg, #ff00b7 0%, #00d0ff 100%);
+    background: linear-gradient(to right, #ff00b7 0%, #00d0ff 100%);
     font-weight: 700;
     font-size: 14px;
     text-align: center;
+    color: #000;
 }
-.card__button--details{
-    border: 2px solid #00D0FF;
-    border-radius: 14px;
+.card__button--vote:hover {
+    color: white;
+    transform: scale(1.05);
+    transition: all 0.3s ease;
+}
+.card__button--details {
+    position: relative;
     width: 140px;
     height: 40px;
     background: rgba(18, 18, 18, 0.5);
+    color: white;
     font-weight: 700;
     font-size: 14px;
     text-align: center;
+    line-height: 40px;
+    border-radius: 14px;
+    overflow: hidden;
+    z-index: 0;
+    border: none;
+}
+.card__button--details::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    background: linear-gradient(to top, #00D0FF, #FF00B7);
+    border-radius: 14px;
+    mask: linear-gradient(to right, white 0%, white 100%) content-box, linear-gradient(to right, white 0%, white 100%);
+    mask-composite: exclude;
+    z-index: -1;
+}
+.card__button--details:hover {
+    background: rgba(18, 18, 18, 0.8);
+    transform: scale(1.05);
+    transition: all 0.3s ease;
 }
 .account__addCard {
     width: 430px;
@@ -119,6 +148,10 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+.account__link:hover{
+    transform: scale(1.05);
+    transition: all 0.3s ease;
 }
 .account__addTitle {
     font-weight: 700;
