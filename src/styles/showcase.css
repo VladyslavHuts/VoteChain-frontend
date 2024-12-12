@@ -24,16 +24,35 @@
     margin-bottom: 20px;
 }
 .showcase__button{
+    position: relative;
     width: 194px;
     height: 52px;
     font-weight: 600;
     font-size: 18px;
-    border: 3px solid magenta;
     border-radius: 10px;
     background: rgba(18, 18, 18, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
+    z-index: 0;
+    border: none;
+}
+.showcase__button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 3px;
+    background: linear-gradient(to left, #63E2ED, #FF00FF);
+    border-radius: 10px;
+    mask: linear-gradient(to right, white 0%, white 100%) content-box, linear-gradient(to right, white 0%, white 100%);
+    mask-composite: exclude;
+    z-index: -1;
+}
+.showcase__button:hover{
+    background: rgba(18, 18, 18, 0.8);
+    transform: scale(1.05);
+    transition: all 0.3s ease;
 }
 .showcase__button-img{
     padding-left: 4px;
