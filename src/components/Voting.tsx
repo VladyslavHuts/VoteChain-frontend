@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import "../styles/voting.css";
-import { FaChevronDown } from "react-icons/fa";
 
 interface VotingState {
     expandedIndex: number | null;
@@ -10,6 +9,8 @@ interface VotingState {
         endDate: string;
     };
     options: { name: string; details: string }[];
+    selectedOption: string | null;
+    hasVoted: boolean;
 }
 
 class Voting extends Component<{}, VotingState> {
@@ -27,9 +28,11 @@ class Voting extends Component<{}, VotingState> {
                 { name: "Sustainable living plan", details: "Details about Sustainable living plan." },
                 { name: "Renewable energy sources", details: "Details about Renewable energy sources." },
                 { name: "Clean water access project", details: "Details about Clean water access project." },
-                { name: "Forest preservation program", details: "Details about Forest preservation program." },
+                { name: "Forest preservation program Fores preservation program", details: "Details about Forest preservation program Details about Forest preservation program." },
                 { name: "Global education support", details: "Details about Global education support." },
             ],
+            selectedOption: null,
+            hasVoted: false,
         };
     }
 
@@ -39,60 +42,95 @@ class Voting extends Component<{}, VotingState> {
         }));
     };
 
+    handleOptionChange = (optionName: string) => {
+        this.setState({ selectedOption: optionName });
+    };
+
+    handleVote = () => {
+        const { selectedOption } = this.state;
+        if (selectedOption) {
+            alert(`You voted for: ${selectedOption}`);
+            this.setState({ hasVoted: true }); // Встановлюємо, що голосування завершено
+        }
+    };
+
+    handleBack = () => {
+        window.history.back();
+    };
+
     render() {
-        const { expandedIndex, votingData, options } = this.state;
+        const { expandedIndex, votingData, options, selectedOption, hasVoted } = this.state;
 
         return (
-            <div className="voting">
-                <div className="container">
-                    <div className="voting__container">
-                        <div className="voting__window">
-                            <p className="voting__title">{votingData.title}</p>
-                            <div className="voting__dates">
-                                <p className="voting__date">Start Date: <span id="start__date">{votingData.startDate}</span></p>
-                                <p className="voting__date">End Date: <span id="end__date">{votingData.endDate}</span></p>
-                            </div>
-                            <div className="voting__content">
+            <div className="container">
+                <div className="voting__container">
+                    <div className="voting__window">
+                        <p className="voting__title">{votingData.title}</p>
+                        <div className="voting__dates">
+                            <p className="voting__date">
+                                Start Date: <span id="start__date">{votingData.startDate}</span>
+                            </p>
+                            <p className="voting__date">
+                                End Date: <span id="end__date">{votingData.endDate}</span>
+                            </p>
+                        </div>
+                        <div className="voting__content">
                             <div className="voting__graph"></div>
-                                <ul className="voting__options">
-                                    {options.map((option, index) => (
-                                        <li
-                                            key={index}
-                                            className={`voting__option ${
-                                                expandedIndex === index ? "expanded" : ""
-                                            }`}
-                                        >
-                                            <div className="voting__header">
-                                                <div
-                                                    className={`voting__icon-wrapper ${
-                                                        expandedIndex === index ? "rotated" : ""
-                                                    }`}
-                                                    onClick={() => this.toggleOption(index)}
-                                                >
-                                                    <FaChevronDown />
-                                                </div>
-                                                <span>{option.name}</span>
+                            <ul className="voting__options">
+                                {options.map((option, index) => (
+                                    <li
+                                        key={index}
+                                        className={`voting__option ${
+                                            selectedOption === option.name && hasVoted ? "selected" : ""
+                                        } ${expandedIndex === index ? "expanded" : ""}`}
+                                    >
+                                        <div className="voting__header">
+                                            <div
+                                                className={`voting__icon-wrapper ${
+                                                    expandedIndex === index ? "rotated" : ""
+                                                }`}
+                                                onClick={() => this.toggleOption(index)}
+                                            >
+                                                <svg width="20" height="14" viewBox="0 0 20 14" fill="none"
+                                                     xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M3.75 0L0 3.81818L10 14L20 3.81818L16.25 0L10 6.36364L3.75 0Z"
+                                                        fill="#E8E8E8"/>
+                                                </svg>
+                                            </div>
+                                            <span>{option.name}</span>
+                                            {!hasVoted && (
                                                 <input
                                                     type="radio"
                                                     name="vote"
                                                     value={option.name}
                                                     className="voting__radiobutton"
+                                                    onChange={() => this.handleOptionChange(option.name)}
                                                 />
-                                            </div>
-                                            <div
-                                                className={`voting__details ${
-                                                    expandedIndex === index ? "expanded" : ""
-                                                }`}
-                                            >
-                                                {option.details}
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
+                                            )}
+                                        </div>
+                                        <div
+                                            className={`voting__details ${
+                                                expandedIndex === index ? "expanded" : ""
+                                            }`}
+                                        >
+                                            {option.details}
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
-                        <button className="voting__btn" type="submit">Vote</button>
                     </div>
+                    {!hasVoted && (
+                            <button
+                                className="voting__btn"
+                                type="submit"
+                                onClick={this.handleVote}
+                                disabled={!selectedOption}
+                            >
+                                Vote
+                            </button>
+                    )}
                 </div>
             </div>
         );

@@ -7,7 +7,7 @@
 .voting__window {
     background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(160, 160, 160, 0.2) 100%);
     border-radius: 60px;
-    margin-top: 40px;
+    margin: 40px 0;
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -60,9 +60,9 @@
     margin: 10px 20px 90px 20px;
 }
 .voting__option {
-    padding: 10px 20px;
+    padding: 10px 60px 10px 20px;
     border: 2px solid #111;
-    border-radius: 100px;
+    border-radius: 30px;
     width: 535px;
     background: #202020;
     font-weight: 700;
@@ -81,7 +81,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 30px;
     margin-right: 10px;
     transition: transform 0.3s ease;
     cursor: pointer;
@@ -102,10 +101,6 @@
     max-height: 300px;
     margin-top: 10px;
 }
-.voting__option.expanded {
-    border-radius: 30px;
-}
-/* Сховати стандартний вигляд радіобатона */
 .voting__radiobutton {
     appearance: none;
     -webkit-appearance: none;
@@ -134,13 +129,37 @@
 }
 
 .voting__btn{
+    display: block;
+    margin: 70px auto;
+    position: relative;
     border-radius: 20px;
     width: 300px;
     height: 80px;
-    border: solid 3px darkblue;
     background: rgba(18, 18, 18, 0.5);
     font-weight: 700;
     font-size: 40px;
     color: #e8e8e8;
-    margin: 70px 530px;
+    overflow: hidden;
+    z-index: 0;
+    border: none;
+    line-height: 40px;
+}
+.voting__btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 3px;
+    background: linear-gradient(to left, #00D0FF, #FF00B7);
+    border-radius: 20px;
+    mask: linear-gradient(to right, white 0%, white 100%) content-box, linear-gradient(to right, white 0%, white 100%);
+    mask-composite: exclude;
+    z-index: -1;
+}
+.voting__btn:hover{
+    background: rgba(18, 18, 18, 0.8);
+    transform: scale(1.05);
+    transition: all 0.3s ease;
+}
+.voting__option.selected {
+    background-color: rgba(225, 1, 255, 0.2)
 }
