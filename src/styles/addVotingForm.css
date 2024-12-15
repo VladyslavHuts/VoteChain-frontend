@@ -1,0 +1,56 @@
+.add-voting-form{
+    padding: 50px 0;
+    background: url("../assets/images/showcase__background.png") no-repeat center / cover;
+}
+.add-voting-form__container{
+    margin: 0 auto;
+    max-width: 600px;
+    padding: 30px;
+    border: 3px solid #767676;
+    border-radius: 30px;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(160, 160, 160, 0.2) 100%);
+}
+.add-voting-form__section{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin: 30px 0;
+}
+.add-voting-form__title{
+    font-weight: 900;
+    font-size: 28px;
+    text-align: center;
+}
+.add-voting-form__group{
+    display: flex;
+    flex-direction: column;
+}
+.add-voting-form__label{
+    font-weight: 700;
+    font-size: 20px;
+}
+.add-voting-form__input{
+    padding: 6px;
+    border: 3px solid #767676;
+    border-radius: 10px;
+}
+.add-voting-form__small{
+
+}
+.add-voting-form__add-option{
+    text-align: right;
+}
+.add-voting-form__button-create{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    border-radius: 20px;
+    width: 240px;
+    height: 60px;
+    background: #141414;
+    border: 3px solid #00D0FF;
+    font-weight: 700;
+    font-size: 22px;
+}
+
