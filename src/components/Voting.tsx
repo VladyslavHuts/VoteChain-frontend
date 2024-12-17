@@ -8,15 +8,17 @@ interface VotingState {
         startDate: string;
         endDate: string;
     };
-    options: { name: string; details: string }[];
+    options: { name: string; details: string; votes: number }[]; // Додано "votes"
     selectedOption: string | null;
     hasVoted: boolean;
+    hoveredIndex: number | null;
 }
 
 class Voting extends Component<{}, VotingState> {
     constructor(props: {}) {
         super(props);
         this.state = {
+
             expandedIndex: null,
             votingData: {
                 title: "Green Future Initiative",
@@ -24,15 +26,16 @@ class Voting extends Component<{}, VotingState> {
                 endDate: "02.20.2024",
             },
             options: [
-                { name: "Green future initiative", details: "Details about Green future initiative." },
-                { name: "Sustainable living plan", details: "Details about Sustainable living plan." },
-                { name: "Renewable energy sources", details: "Details about Renewable energy sources." },
-                { name: "Clean water access project", details: "Details about Clean water access project." },
-                { name: "Forest preservation program Fores preservation program", details: "Details about Forest preservation program Details about Forest preservation program." },
-                { name: "Global education support", details: "Details about Global education support." },
+                { name: "Green future initiative", details: "Details about Green future initiative.", votes: 1198 },
+                { name: "Sustainable living plan", details: "Details about Sustainable living plan.", votes: 720 },
+                { name: "Renewable energy sources", details: "Details about Renewable energy sources.", votes: 1890 },
+                { name: "Clean water access project", details: "Details about Clean water access project.", votes: 780 },
+                { name: "Forest preservation programForest preservation program", details: "Details about Forest preservation program.", votes: 670 },
+                { name: "Global education support", details: "Details about Global education support.", votes: 220 },
             ],
             selectedOption: null,
             hasVoted: false,
+            hoveredIndex: null,
         };
     }
 
@@ -50,16 +53,16 @@ class Voting extends Component<{}, VotingState> {
         const { selectedOption } = this.state;
         if (selectedOption) {
             alert(`You voted for: ${selectedOption}`);
-            this.setState({ hasVoted: true }); // Встановлюємо, що голосування завершено
+            this.setState({ hasVoted: true });
         }
     };
 
-    handleBack = () => {
-        window.history.back();
-    };
-
     render() {
-        const { expandedIndex, votingData, options, selectedOption, hasVoted } = this.state;
+        const { expandedIndex, votingData, options, selectedOption, hasVoted, hoveredIndex } = this.state;
+
+        const sortedOptions = [...options].sort((a, b) => b.votes - a.votes);
+        const maxVotes = Math.max(...sortedOptions.map(option => option.votes));
+        const totalVotes = sortedOptions.reduce((sum, option) => sum + option.votes, 0);
 
         return (
             <div className="container">
@@ -74,10 +77,44 @@ class Voting extends Component<{}, VotingState> {
                                 End Date: <span id="end__date">{votingData.endDate}</span>
                             </p>
                         </div>
+
                         <div className="voting__content">
-                            <div className="voting__graph"></div>
+                            <div className="voting__graph">
+                                {sortedOptions.map((option, index) => {
+                                    const scaledWidth = ((option.votes / maxVotes) * 95).toFixed(0);
+                                    const actualPercentage = ((option.votes / totalVotes) * 100).toFixed(0);
+
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="voting__bar-container"
+                                            onMouseEnter={() => this.setState({hoveredIndex: index})}
+                                            onMouseLeave={() => this.setState({hoveredIndex: null})}
+                                        >
+                                            <div className="voting__bar-label">{option.votes}</div>
+                                            <div className="voting__bar-background">
+                                                <div
+                                                    className={`voting__bar ${
+                                                        this.state.hasVoted && this.state.selectedOption === option.name
+                                                            ? "voting__bar-selected"
+                                                            : ""
+                                                    }`}
+                                                    style={{width: `${scaledWidth}%`}}
+                                                ></div>
+                                            </div>
+                                            <div className="voting__bar-percentage-container">
+                                                <div className="voting__bar-percentage">{actualPercentage}%</div>
+                                            </div>
+
+                                            {hoveredIndex === index && (
+                                                <div className="voting__tooltip">{option.name}</div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
                             <ul className="voting__options">
-                                {options.map((option, index) => (
+                                {sortedOptions.map((option, index) => (
                                     <li
                                         key={index}
                                         className={`voting__option ${
@@ -120,8 +157,7 @@ class Voting extends Component<{}, VotingState> {
                                 ))}
                             </ul>
                         </div>
-                    </div>
-                    {!hasVoted && (
+                        {!hasVoted && (
                             <button
                                 className="voting__btn"
                                 type="submit"
@@ -130,11 +166,13 @@ class Voting extends Component<{}, VotingState> {
                             >
                                 Vote
                             </button>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
-        );
+        )
     }
+
 }
 
 export default Voting;
