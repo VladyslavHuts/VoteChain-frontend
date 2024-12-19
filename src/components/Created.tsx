@@ -1,23 +1,24 @@
-import React, {Component, useState} from 'react';
+import React, { Component } from "react";
 import card__img from "../assets/images/card__img-user.svg";
+import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
 
-interface CardProps {
+export interface CardProps {
+    id: string;
     title: string;
     description: string;
     imageUrl: string;
-    onVote: () => void;
     onDetails: () => void;
 }
 
-const Card: React.FC<CardProps> = ({ title, description, imageUrl, onVote, onDetails }) => {
-    const [hovered, setHovered] = useState(false);
+const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, onDetails }) => {
+    const navigate = useNavigate();
 
     return (
         <div
-            className={`card ${hovered ? "card--hovered" : ""}`}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
+            className="card"
+            onMouseEnter={() => {}}
+            onMouseLeave={() => {}}
         >
             <div className="card__header">
                 <h2 className="card__title">{title}</h2>
@@ -29,10 +30,16 @@ const Card: React.FC<CardProps> = ({ title, description, imageUrl, onVote, onDet
                 </div>
             </div>
             <div className="card__actions">
-                <button className="card__button card__button--vote" onClick={onVote}>
+                <button
+                    className="card__button card__button--vote"
+                    onClick={() => navigate(`/vote/${id}`)}
+                >
                     Vote
                 </button>
-                <button className="card__button card__button--details" onClick={onDetails}>
+                <button
+                    className="card__button card__button--details"
+                    onClick={onDetails}
+                >
                     Details
                 </button>
             </div>
@@ -44,32 +51,20 @@ class Created extends Component {
     render() {
         const cards = [
             {
-                title: "Sample Card",
-                description: "This is a description of the sample card.",
+                id: "1",
+                title: "Sample Card 1",
+                description: "Description for Sample Card 1",
                 imageUrl: card__img,
-                onVote: () => alert("Voted!"),
-                onDetails: () => alert("Details!")
+                onVote: () => {},
+                onDetails: () => alert("Details for Card 1!")
             },
             {
-                title: "Sample Card",
-                description: "This is a description of the sample card.",
+                id: "2",
+                title: "Sample Card 2",
+                description: "Description for Sample Card 2",
                 imageUrl: card__img,
-                onVote: () => alert("Voted!"),
-                onDetails: () => alert("Details!")
-            },
-            {
-                title: "Sample Card",
-                description: "This is a description of the sample card.",
-                imageUrl: card__img,
-                onVote: () => alert("Voted!"),
-                onDetails: () => alert("Details!")
-            },
-            {
-                title: "Sample Card",
-                description: "This is a description of the sample card.",
-                imageUrl: card__img,
-                onVote: () => alert("Voted!"),
-                onDetails: () => alert("Details!")
+                onVote: () => {},
+                onDetails: () => alert("Details for Card 2!")
             }
         ];
         return (
@@ -77,11 +72,7 @@ class Created extends Component {
                 {cards.map((card, index) => (
                     <Card
                         key={index}
-                        title={card.title}
-                        description={card.description}
-                        imageUrl={card.imageUrl}
-                        onVote={card.onVote}
-                        onDetails={card.onDetails}
+                        {...card}
                     />
                 ))}
                 <div className="account__addCard">

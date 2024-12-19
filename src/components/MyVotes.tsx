@@ -1,16 +1,22 @@
 import React, {Component, useState} from 'react';
 import card__img from "../assets/images/card__img-user.svg";
+import { useNavigate } from "react-router-dom";
 
 export interface CardProps {
+    id: string;
     title: string;
     description: string;
     imageUrl: string;
-    onVote: () => void;
     onDetails: () => void;
 }
 
-const Card: React.FC<CardProps> = ({ title, description, imageUrl, onVote, onDetails }) => {
+const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, onDetails }) => {
     const [hovered, setHovered] = useState(false);
+    const navigate = useNavigate();
+
+    const handleVote = () => {
+        navigate(`/vote/${id}`);
+    };
 
     return (
         <div
@@ -28,7 +34,7 @@ const Card: React.FC<CardProps> = ({ title, description, imageUrl, onVote, onDet
                 </div>
             </div>
             <div className="card__actions">
-                <button className="card__button card__button--vote" onClick={onVote}>
+                <button className="card__button card__button--vote" onClick={handleVote}>
                     Vote
                 </button>
                 <button className="card__button card__button--details" onClick={onDetails}>
@@ -43,32 +49,32 @@ class MyVotes extends Component {
     render() {
         const cards = [
             {
-                title: "My votes Card",
-                description: "This is a description of the my votes card.",
+                id: "1",
+                title: "My votes Card 1",
+                description: "This is a description of the my votes card 1.",
                 imageUrl: card__img,
-                onVote: () => alert("Voted!"),
-                onDetails: () => alert("Details!")
+                onDetails: () => alert("Details for card 1!")
             },
             {
-                title: "My votes Card",
-                description: "This is a description of the my votes card.",
+                id: "2",
+                title: "My votes Card 2",
+                description: "This is a description of the my votes card 2.",
                 imageUrl: card__img,
-                onVote: () => alert("Voted!"),
-                onDetails: () => alert("Details!")
+                onDetails: () => alert("Details for card 2!")
             },
             {
-                title: "My votes Card",
-                description: "This is a description of the my votes card.",
+                id: "3",
+                title: "My votes Card 3",
+                description: "This is a description of the my votes card 3.",
                 imageUrl: card__img,
-                onVote: () => alert("Voted!"),
-                onDetails: () => alert("Details!")
+                onDetails: () => alert("Details for card 3!")
             },
             {
-                title: "My votes Card",
-                description: "This is a description of the my votes card.",
+                id: "4",
+                title: "My votes Card 4",
+                description: "This is a description of the my votes card 4.",
                 imageUrl: card__img,
-                onVote: () => alert("Voted!"),
-                onDetails: () => alert("Details!")
+                onDetails: () => alert("Details for card 4!")
             }
         ];
         return (
@@ -76,11 +82,7 @@ class MyVotes extends Component {
                 {cards.map((card, index) => (
                     <Card
                         key={index}
-                        title={card.title}
-                        description={card.description}
-                        imageUrl={card.imageUrl}
-                        onVote={card.onVote}
-                        onDetails={card.onDetails}
+                        {...card}
                     />
                 ))}
             </div>
