@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { useParams } from "react-router-dom";
 import "../styles/voting.css";
 
 interface VotingState {
@@ -7,37 +8,59 @@ interface VotingState {
         title: string;
         startDate: string;
         endDate: string;
-    };
-    options: { name: string; details: string; votes: number }[]; // Додано "votes"
+    } | null;
+    options: { name: string; details: string; votes: number }[];
     selectedOption: string | null;
     hasVoted: boolean;
     hoveredIndex: number | null;
 }
 
-class Voting extends Component<{}, VotingState> {
-    constructor(props: {}) {
+interface VotingProps {
+    id: string;
+}
+
+class Voting extends Component<VotingProps, VotingState> {
+    constructor(props: VotingProps) {
         super(props);
         this.state = {
-
             expandedIndex: null,
-            votingData: {
-                title: "Green Future Initiative",
-                startDate: "01.15.2024",
-                endDate: "02.20.2024",
-            },
-            options: [
-                { name: "Green future initiative", details: "Details about Green future initiative.", votes: 1198 },
-                { name: "Sustainable living plan", details: "Details about Sustainable living plan.", votes: 720 },
-                { name: "Renewable energy sources", details: "Details about Renewable energy sources.", votes: 1890 },
-                { name: "Clean water access project", details: "Details about Clean water access project.", votes: 780 },
-                { name: "Forest preservation programForest preservation program", details: "Details about Forest preservation program.", votes: 670 },
-                { name: "Global education support", details: "Details about Global education support.", votes: 220 },
-            ],
+            votingData: null,
+            options: [],
             selectedOption: null,
             hasVoted: false,
             hoveredIndex: null,
         };
     }
+
+    componentDidMount() {
+        const { id } = this.props;
+        this.fetchVotingData(id);
+    }
+
+    fetchVotingData = (id: string) => {
+        const mockData = {
+            title: "Green Future Initiative",
+            startDate: "01.15.2024",
+            endDate: "02.20.2024",
+            options: [
+                { name: "Green future initiative", details: "Details about Green future initiative.", votes: 1198 },
+                { name: "Sustainable living plan", details: "Details about Sustainable living plan.", votes: 720 },
+                { name: "Renewable energy sources", details: "Details about Renewable energy sources.", votes: 1890 },
+                { name: "Clean water access project", details: "Details about Clean water access project.", votes: 780 },
+                { name: "Forest preservation program", details: "Details about Forest preservation program.", votes: 670 },
+                { name: "Global education support", details: "Details about Global education support.", votes: 220 },
+            ],
+        };
+
+        this.setState({
+            votingData: {
+                title: mockData.title,
+                startDate: mockData.startDate,
+                endDate: mockData.endDate,
+            },
+            options: mockData.options,
+        });
+    };
 
     toggleOption = (index: number) => {
         this.setState((prevState) => ({
@@ -59,6 +82,10 @@ class Voting extends Component<{}, VotingState> {
 
     render() {
         const { expandedIndex, votingData, options, selectedOption, hasVoted, hoveredIndex } = this.state;
+
+        if (!votingData) {
+            return <p>Loading voting data...</p>;
+        }
 
         const sortedOptions = [...options].sort((a, b) => b.votes - a.votes);
         const maxVotes = Math.max(...sortedOptions.map(option => option.votes));
@@ -88,8 +115,8 @@ class Voting extends Component<{}, VotingState> {
                                         <div
                                             key={index}
                                             className="voting__bar-container"
-                                            onMouseEnter={() => this.setState({hoveredIndex: index})}
-                                            onMouseLeave={() => this.setState({hoveredIndex: null})}
+                                            onMouseEnter={() => this.setState({ hoveredIndex: index })}
+                                            onMouseLeave={() => this.setState({ hoveredIndex: null })}
                                         >
                                             <div className="voting__bar-label">{option.votes}</div>
                                             <div className="voting__bar-background">
@@ -99,7 +126,9 @@ class Voting extends Component<{}, VotingState> {
                                                             ? "voting__bar-selected"
                                                             : ""
                                                     }`}
-                                                    style={{width: `${scaledWidth}%`}}
+                                                    style={{
+                                                        "--target-width": `${scaledWidth}%`,
+                                                    } as React.CSSProperties}
                                                 ></div>
                                             </div>
                                             <div className="voting__bar-percentage-container">
@@ -113,6 +142,7 @@ class Voting extends Component<{}, VotingState> {
                                     );
                                 })}
                             </div>
+
                             <ul className="voting__options">
                                 {sortedOptions.map((option, index) => (
                                     <li
@@ -132,7 +162,7 @@ class Voting extends Component<{}, VotingState> {
                                                      xmlns="http://www.w3.org/2000/svg">
                                                     <path
                                                         d="M3.75 0L0 3.81818L10 14L20 3.81818L16.25 0L10 6.36364L3.75 0Z"
-                                                        fill="#E8E8E8"/>
+                                                        fill="#E8E8E8" />
                                                 </svg>
                                             </div>
                                             <span>{option.name}</span>
@@ -170,9 +200,14 @@ class Voting extends Component<{}, VotingState> {
                     </div>
                 </div>
             </div>
-        )
+        );
     }
-
 }
 
-export default Voting;
+// Використання функціонального компонента для передачі параметрів маршруту
+const VotingWithParams: React.FC = () => {
+    const { id } = useParams<{ id: string }>(); // Отримуємо ID з маршруту
+    return <Voting id={id!} />;
+};
+
+export default VotingWithParams;

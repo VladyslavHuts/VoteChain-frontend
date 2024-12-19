@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 import Showcase from './components/Showcase';
 import ActiveVotes from './pages/ActiveVotes';
 import Voting from './pages/Voting';
+import NotFound from './components/NotFound';
 
 
 
@@ -18,7 +19,8 @@ const App: React.FC<{}> = () => {
             <Routes>
                 <Route path="/" element={<Showcase />} />
                 <Route path="/active-votes" element={<ActiveVotes />} />
-                <Route path="/Voting" element={<Voting />} />
+                <Route path="/voting" element={<Voting />} />
+                <Route path="*" element={<NotFound />} />
             </Routes>
           <Footer/>
         </Router>

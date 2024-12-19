@@ -96,6 +96,8 @@
     border-radius: 0 100px 100px 0;
     transition: width 0.5s ease;
     max-width: calc(100% - 5px);
+    animation: slideIn 2s ease forwards;
+    width: 0;
 }
 .voting__bar-label {
     position: absolute;
@@ -242,4 +244,12 @@
 }
 .voting__bar-selected {
     background: linear-gradient(90deg, rgba(173, 0, 255, 1) 0%, rgba(255, 105, 255, 1) 100%);
+}
+@keyframes slideIn {
+    from {
+        width: 0;
+    }
+    to {
+        width: var(--target-width);
+    }
 }
