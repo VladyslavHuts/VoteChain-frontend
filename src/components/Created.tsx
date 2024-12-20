@@ -32,7 +32,7 @@ const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, onDetails
             <div className="card__actions">
                 <button
                     className="card__button card__button--vote"
-                    onClick={() => navigate(`/vote/${id}`)}
+                    onClick={() => navigate(`/Voting/${id}`)}
                 >
                     Vote
                 </button>

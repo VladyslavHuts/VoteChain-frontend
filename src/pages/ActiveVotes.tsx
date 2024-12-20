@@ -6,6 +6,7 @@ class ActiveVotes extends Component {
         return (
             <div className="activeVotes">
                 <Link to="/Account">Aboba account</Link>
+                <Link to="/Voting">Aboba voting</Link>
             </div>
         );
     }
