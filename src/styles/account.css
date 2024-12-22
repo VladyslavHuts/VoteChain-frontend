@@ -1,13 +1,72 @@
 .account{
     background: url("../assets/images/account__background.png") no-repeat left / cover;
 }
-.account__container{
+.account__identify {
+    position: relative;
     display: flex;
-    justify-content: space-between;
+    margin-top: 50px;
     align-items: center;
 }
+.account__button-identify {
+    width: 160px;
+    height: 50px;
+    font-weight: 700;
+    font-size: 16px;
+    text-align: center;
+    background: rgba(18, 18, 18, 0.5);
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px solid #ff00b7;
+    margin-left: 50px;
+    margin-right: 15px;
+    transition: all 0.3s ease;
+}
+.account__button-identify:hover {
+    background: rgba(18, 18, 18, 0.8);
+    transform: scale(1.05);
+    transition: all 0.3s ease;
+}
+.account__button-identify.waiting {
+    border: 2px solid yellow;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+.account__button-identify.success {
+    border: 2px solid #00D0FF;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+.account__icon-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+}
+.account__question {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+}
+.account__tooltip {
+    position: absolute;
+    left: 110%;
+    bottom: -25%;
+    background: #303030;
+    padding: 10px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    width: 500px;
+    display: none;
+}
+.account__icon-wrapper:hover .account__tooltip {
+    display: block;
+}
 .account__navigation{
-    margin-top: 100px;
+    margin-top: 50px;
     margin-left: 50px;
     font-weight: 600;
     font-size: 32px;
@@ -37,13 +96,28 @@
     margin: 30px 0 30px 18px;
     gap: 20px 17px;
 }
-.card{
+.card {
+    position: relative;
     width: 430px;
     height: 284px;
     border: 4px solid #5c5c5c;
     border-radius: 50px;
     background: #404040;
-
+    overflow: hidden;
+}
+.card--closed {
+    filter: grayscale(100%);
+    pointer-events: none;
+}
+.card__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+    pointer-events: none;
 }
 .card__header{
     border-radius: 46px 46px 0 0;
@@ -68,7 +142,6 @@
     height: 80px;
 }
 .card__title{
-    width: 160px;
     height: 54px;
     font-weight: 700;
     font-size: 22px;

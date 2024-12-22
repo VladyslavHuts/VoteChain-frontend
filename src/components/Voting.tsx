@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "../styles/voting.css";
 
 interface VotingState {
@@ -17,6 +17,7 @@ interface VotingState {
 
 interface VotingProps {
     id: string;
+    onNotFound: () => void;
 }
 
 class Voting extends Component<VotingProps, VotingState> {
@@ -38,28 +39,54 @@ class Voting extends Component<VotingProps, VotingState> {
     }
 
     fetchVotingData = (id: string) => {
-        const mockData = {
-            title: "Green Future Initiative",
-            startDate: "01.15.2024",
-            endDate: "02.20.2024",
-            options: [
-                { name: "Green future initiative", details: "Details about Green future initiative.", votes: 1198 },
-                { name: "Sustainable living plan", details: "Details about Sustainable living plan.", votes: 720 },
-                { name: "Renewable energy sources", details: "Details about Renewable energy sources.", votes: 1890 },
-                { name: "Clean water access project", details: "Details about Clean water access project.", votes: 780 },
-                { name: "Forest preservation program", details: "Details about Forest preservation program.", votes: 670 },
-                { name: "Global education support", details: "Details about Global education support.", votes: 220 },
-            ],
-        };
-
-        this.setState({
-            votingData: {
-                title: mockData.title,
-                startDate: mockData.startDate,
-                endDate: mockData.endDate,
+        const mockData = [
+            {
+                id: "1",
+                title: "Green Future Initiative",
+                startDate: "01.15.2024",
+                endDate: "02.20.2024",
+                options: [
+                    { name: "Green future initiative", details: "Details about Green future initiative.", votes: 1198 },
+                    { name: "Sustainable living plan", details: "Details about Sustainable living plan.", votes: 720 },
+                    { name: "Renewable energy sources", details: "Details about Renewable energy sources.", votes: 1890 },
+                    { name: "Clean water access project", details: "Details about Clean water access project.", votes: 780 },
+                    { name: "Forest preservation programForest preservation program", details: "Details about Forest preservation program.", votes: 670 },
+                    { name: "Global education support", details: "Details about Global education support.", votes: 220 },
+                ],
             },
-            options: mockData.options,
-        });
+            {
+                id: "2",
+                title: "Clean Energy Project",
+                startDate: "02.01.2024",
+                endDate: "03.01.2024",
+                options: [
+                    { name: "Solar power expansion", details: "Details about Solar power expansion.", votes: 870 },
+                    { name: "Wind energy development", details: "Invest in expanding wind turbine infrastructure to increase renewable energy capacity.", votes: 430 },
+                    { name: "Hydropower efficiency upgrades", details: "Improve the efficiency of existing hydropower plants for better energy production.", votes: 320 },
+                    { name: "Geothermal energy exploration", details: "Explore new geothermal energy sources and develop existing ones.", votes: 210 },
+                    { name: "Electric vehicle infrastructure", details: "Build more electric vehicle charging stations across urban areas.", votes: 560 },
+                    { name: "Energy storage solutions", details: "Invest in developing advanced energy storage systems for renewable energy.", votes: 650 },
+                    { name: "Smart grid technology", details: "Implement smart grid technology for better energy distribution and management.", votes: 540 },
+                    { name: "Biomass energy projects", details: "Develop sustainable biomass energy solutions using organic materials.", votes: 190 },
+                    { name: "Nuclear fusion research", details: "Support ongoing research into nuclear fusion as a clean energy source.", votes: 300 }
+                ]
+            }
+        ];
+
+        const voting = mockData.find((item) => item.id === id);
+
+        if (voting) {
+            this.setState({
+                votingData: {
+                    title: voting.title,
+                    startDate: voting.startDate,
+                    endDate: voting.endDate,
+                },
+                options: voting.options,
+            });
+        } else {
+            this.props.onNotFound(); // Викликаємо функцію для обробки відсутності ID
+        }
     };
 
     toggleOption = (index: number) => {
@@ -206,8 +233,14 @@ class Voting extends Component<VotingProps, VotingState> {
 
 // Використання функціонального компонента для передачі параметрів маршруту
 const VotingWithParams: React.FC = () => {
-    const { id } = useParams<{ id: string }>(); // Отримуємо ID з маршруту
-    return <Voting id={id!} />;
+    const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
+
+    const handleNotFound = () => {
+        navigate("/404"); // Перенаправляємо на сторінку 404
+    };
+
+    return <Voting id={id!} onNotFound={handleNotFound} />;
 };
 
 export default VotingWithParams;

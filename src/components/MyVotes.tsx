@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react';
+import React, { Component } from "react";
 import card__img from "../assets/images/card__img-user.svg";
 import { useNavigate } from "react-router-dom";
 
@@ -10,20 +10,12 @@ export interface CardProps {
     onDetails: () => void;
 }
 
-const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, onDetails }) => {
-    const [hovered, setHovered] = useState(false);
+const Card: React.FC<CardProps & { isClosed: boolean }> = ({ id, title, description, imageUrl, onDetails, isClosed }) => {
     const navigate = useNavigate();
 
-    const handleVote = () => {
-        navigate(`/vote/${id}`);
-    };
-
     return (
-        <div
-            className={`card ${hovered ? "card--hovered" : ""}`}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-        >
+        <div className={`card ${isClosed ? "card--closed" : ""}`}>
+            {isClosed && <div className="card__overlay"></div>}
             <div className="card__header">
                 <h2 className="card__title">{title}</h2>
             </div>
@@ -34,10 +26,18 @@ const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, onDetails
                 </div>
             </div>
             <div className="card__actions">
-                <button className="card__button card__button--vote" onClick={handleVote}>
+                <button
+                    className="card__button card__button--vote"
+                    onClick={() => !isClosed && navigate(`/Voting/${id}`)}
+                    disabled={isClosed}
+                >
                     Vote
                 </button>
-                <button className="card__button card__button--details" onClick={onDetails}>
+                <button
+                    className="card__button card__button--details"
+                    onClick={onDetails}
+                    disabled={isClosed}
+                >
                     Details
                 </button>
             </div>
@@ -50,31 +50,35 @@ class MyVotes extends Component {
         const cards = [
             {
                 id: "1",
-                title: "My votes Card 1",
+                title: "Green Future Initiative",
                 description: "This is a description of the my votes card 1.",
                 imageUrl: card__img,
-                onDetails: () => alert("Details for card 1!")
+                onDetails: () => alert("Details for card 1!"),
+                isClosed: false,
             },
             {
                 id: "2",
-                title: "My votes Card 2",
+                title: "Clean Energy Project",
                 description: "This is a description of the my votes card 2.",
                 imageUrl: card__img,
-                onDetails: () => alert("Details for card 2!")
+                onDetails: () => alert("Details for card 2!"),
+                isClosed: false,
             },
             {
                 id: "3",
                 title: "My votes Card 3",
                 description: "This is a description of the my votes card 3.",
                 imageUrl: card__img,
-                onDetails: () => alert("Details for card 3!")
+                onDetails: () => alert("Details for card 3!"),
+                isClosed: true,
             },
             {
                 id: "4",
                 title: "My votes Card 4",
                 description: "This is a description of the my votes card 4.",
                 imageUrl: card__img,
-                onDetails: () => alert("Details for card 4!")
+                onDetails: () => alert("Details for card 4!"),
+                isClosed: true,
             }
         ];
         return (
@@ -89,5 +93,4 @@ class MyVotes extends Component {
         );
     }
 }
-
 export default MyVotes;

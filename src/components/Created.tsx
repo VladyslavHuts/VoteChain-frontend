@@ -11,15 +11,12 @@ export interface CardProps {
     onDetails: () => void;
 }
 
-const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, onDetails }) => {
+const Card: React.FC<CardProps & { isClosed: boolean }> = ({ id, title, description, imageUrl, onDetails, isClosed }) => {
     const navigate = useNavigate();
 
     return (
-        <div
-            className="card"
-            onMouseEnter={() => {}}
-            onMouseLeave={() => {}}
-        >
+        <div className={`card ${isClosed ? "card--closed" : ""}`}>
+            {isClosed && <div className="card__overlay"></div>}
             <div className="card__header">
                 <h2 className="card__title">{title}</h2>
             </div>
@@ -32,13 +29,15 @@ const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, onDetails
             <div className="card__actions">
                 <button
                     className="card__button card__button--vote"
-                    onClick={() => navigate(`/Voting/${id}`)}
+                    onClick={() => !isClosed && navigate(`/Voting/${id}`)}
+                    disabled={isClosed}
                 >
                     Vote
                 </button>
                 <button
                     className="card__button card__button--details"
                     onClick={onDetails}
+                    disabled={isClosed}
                 >
                     Details
                 </button>
@@ -52,19 +51,30 @@ class Created extends Component {
         const cards = [
             {
                 id: "1",
-                title: "Sample Card 1",
+                title: "Green Future Initiative",
                 description: "Description for Sample Card 1",
                 imageUrl: card__img,
                 onVote: () => {},
-                onDetails: () => alert("Details for Card 1!")
+                onDetails: () => alert("Details for Card 1!"),
+                isClosed: false,
             },
             {
                 id: "2",
-                title: "Sample Card 2",
+                title: "Clean Energy Project",
                 description: "Description for Sample Card 2",
                 imageUrl: card__img,
                 onVote: () => {},
-                onDetails: () => alert("Details for Card 2!")
+                onDetails: () => alert("Details for Card 2!"),
+                isClosed: false,
+            },
+            {
+                id: "3",
+                title: "Sample Card 3",
+                description: "Description for Sample Card 3",
+                imageUrl: card__img,
+                onVote: () => {},
+                onDetails: () => alert("Details for Card 3!"),
+                isClosed: true,
             }
         ];
         return (
