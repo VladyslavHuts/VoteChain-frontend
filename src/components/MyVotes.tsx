@@ -10,7 +10,7 @@ export interface CardProps {
     onDetails: () => void;
 }
 
-const Card: React.FC<CardProps & { isClosed: boolean }> = ({ id, title, description, imageUrl, onDetails, isClosed }) => {
+export const Card: React.FC<CardProps & { isClosed: boolean }> = ({ id, title, description, imageUrl, onDetails, isClosed }) => {
     const navigate = useNavigate();
 
     return (
@@ -72,14 +72,6 @@ class MyVotes extends Component {
                 onDetails: () => alert("Details for card 3!"),
                 isClosed: true,
             },
-            {
-                id: "4",
-                title: "My votes Card 4",
-                description: "This is a description of the my votes card 4.",
-                imageUrl: card__img,
-                onDetails: () => alert("Details for card 4!"),
-                isClosed: true,
-            }
         ];
         return (
             <div className="account__cards">
@@ -93,4 +85,5 @@ class MyVotes extends Component {
         );
     }
 }
+
 export default MyVotes;
