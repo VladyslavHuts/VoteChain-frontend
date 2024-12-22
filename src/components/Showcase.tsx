@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import '../styles/showcase.css';
 import metamsk from '../assets/images/showcase__metamask.svg';
-import logo from "../assets/images/header__logo.svg";
+
 
 class Showcase extends Component {
     render() {
