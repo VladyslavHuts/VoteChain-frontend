@@ -40,17 +40,69 @@
 .add-voting-form__add-option{
     text-align: right;
 }
-.add-voting-form__button-create{
+.add-voting-form__button-create {
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 0 auto;
+    position: relative;
+    padding: 10px 20px;
+    color: white;
+    background-color: black;
+    border: none;
     border-radius: 20px;
-    width: 240px;
-    height: 60px;
-    background: #141414;
-    border: 3px solid #00D0FF;
+    cursor: pointer;
+    z-index: 1;
+    overflow: hidden;
+    transition: color 0.3s ease;
     font-weight: 700;
     font-size: 22px;
+    width: 240px;
+    height: 60px;
 }
+.add-voting-form__button-create::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background: linear-gradient(90deg, #ff007f, #0077ff);
+    border-radius: 20px;
+    padding: 3px;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    transition: all 0.3s ease;
+}
+.add-voting-form__button-create:hover {
+    color: #0077ff;
+}
+.add-voting-form__input-file {
+    display: none;
+}
+.add-voting-form__button-upload {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    color: white;
+    background-color: black;
+    border: 3px solid transparent;
+    border-radius: 8px;
+    background-image: linear-gradient(black, black), linear-gradient(90deg, #ff007f, #0077ff);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    font-weight: 700;
+    width: 200px;
+    height: 40px;
+}
+.add-voting-form__button-upload:hover {
+    color: #0077ff;
+}
+
 

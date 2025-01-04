@@ -10,7 +10,9 @@ interface State {
     title: string;
     description: string;
     options: Option[];
-    photo: File | null; // Поле для збереження фото
+    photo: File | null;
+    startDate: string;
+    endDate: string;
 }
 
 class AddVotingForm extends Component<{}, State> {
@@ -19,6 +21,8 @@ class AddVotingForm extends Component<{}, State> {
         description: "",
         options: [{ title: "", description: "" }],
         photo: null,
+        startDate: "",
+        endDate: "",
     };
 
     handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -29,6 +33,18 @@ class AddVotingForm extends Component<{}, State> {
     handlePhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             this.setState({ photo: e.target.files[0] });
+        }
+        if (e.target.files && e.target.files[0]) {
+            this.setState({ photo: e.target.files[0] });
+        } else {
+            this.setState({ photo: null });
+        }
+    };
+
+    handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        if (name === "startDate" || name === "endDate") {
+            this.setState({ [name]: value } as unknown as Pick<State, "startDate" | "endDate">);
         }
     };
 
@@ -53,7 +69,7 @@ class AddVotingForm extends Component<{}, State> {
     handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
-        const { title, description, options, photo } = this.state;
+        const { title, description, options, photo, startDate, endDate } = this.state;
 
         if (!title.trim() || !description.trim()) {
             alert("Title and description are required.");
@@ -65,12 +81,18 @@ class AddVotingForm extends Component<{}, State> {
             return;
         }
 
-        if (options.length === 0 || options.every((opt) => !opt.title.trim() && !opt.description.trim())) {
-            alert("At least one valid option is required.");
+        const currentDate = new Date().toISOString().split("T")[0];
+        if (!startDate || startDate < currentDate) {
+            alert("Start date must not be earlier than today.");
             return;
         }
 
-        if (options.some((opt) => !opt.title.trim() || !opt.description.trim())) {
+        if (!endDate || endDate <= startDate) {
+            alert("End date must be after the start date.");
+            return;
+        }
+
+        if (options.length === 0 || options.some((opt) => !opt.title.trim() || !opt.description.trim())) {
             alert("All options must have a title and description.");
             return;
         }
@@ -79,6 +101,8 @@ class AddVotingForm extends Component<{}, State> {
         payload.append("title", title);
         payload.append("description", description);
         payload.append("photo", photo);
+        payload.append("startDate", startDate);
+        payload.append("endDate", endDate);
         payload.append("options", JSON.stringify(options));
 
         console.log("Data to be sent:", payload);
@@ -106,7 +130,6 @@ class AddVotingForm extends Component<{}, State> {
                                         id="title"
                                         name="title"
                                         className="add-voting-form__input"
-                                        placeholder="Enter title"
                                         value={this.state.title}
                                         onChange={this.handleChange}
                                         required
@@ -118,8 +141,6 @@ class AddVotingForm extends Component<{}, State> {
                                         id="description"
                                         name="description"
                                         className="add-voting-form__input"
-                                        placeholder="Enter a description"
-                                        rows={3}
                                         value={this.state.description}
                                         onChange={this.handleChange}
                                         required
@@ -127,12 +148,41 @@ class AddVotingForm extends Component<{}, State> {
                                 </div>
                                 <div className="add-voting-form__group">
                                     <label htmlFor="photo" className="add-voting-form__label">Upload Photo</label>
+                                    <label className="add-voting-form__button-upload" htmlFor="photo">
+                                        {this.state.photo ? "Photo Selected" : "Choose a File"}
+                                    </label>
                                     <input
                                         type="file"
                                         id="photo"
                                         name="photo"
                                         accept="image/*"
+                                        className="add-voting-form__input-file"
                                         onChange={this.handlePhotoChange}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="add-voting-form__group">
+                                    <label htmlFor="startDate" className="add-voting-form__label">Start Date</label>
+                                    <input
+                                        type="date"
+                                        id="startDate"
+                                        name="startDate"
+                                        className="add-voting-form__input"
+                                        value={this.state.startDate}
+                                        onChange={this.handleDateChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="add-voting-form__group">
+                                    <label htmlFor="endDate" className="add-voting-form__label">End Date</label>
+                                    <input
+                                        type="date"
+                                        id="endDate"
+                                        name="endDate"
+                                        className="add-voting-form__input"
+                                        value={this.state.endDate}
+                                        onChange={this.handleDateChange}
                                         required
                                     />
                                 </div>
@@ -146,7 +196,6 @@ class AddVotingForm extends Component<{}, State> {
                                             <input
                                                 type="text"
                                                 className="add-voting-form__input"
-                                                placeholder="Enter option title"
                                                 value={option.title}
                                                 onChange={(e) =>
                                                     this.handleOptionChange(index, "title", e.target.value)
@@ -158,8 +207,6 @@ class AddVotingForm extends Component<{}, State> {
                                             <label className="add-voting-form__label">Option Description</label>
                                             <textarea
                                                 className="add-voting-form__input"
-                                                placeholder="Enter option description"
-                                                rows={2}
                                                 value={option.description}
                                                 onChange={(e) =>
                                                     this.handleOptionChange(index, "description", e.target.value)
