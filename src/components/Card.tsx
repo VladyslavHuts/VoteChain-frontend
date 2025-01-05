@@ -67,7 +67,7 @@ const Card: React.FC<CardProps> = ({ title, description, imageUrl, onVote }) => 
                 </button>
             </div>
 
-            {isComplaintModalOpen && <ComplaintModal onClose={closeComplaintModal} />}
+            {isComplaintModalOpen && <ComplaintModal onClose={closeComplaintModal}/>}
 
             {isDetailsModalOpen && (
                 <Details
