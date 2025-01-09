@@ -5,7 +5,7 @@ class Voting extends Component {
     render() {
         return (
             <div className="voting">
-            <VotingComponent/>
+                <VotingComponent/>
             </div>
         );
     }

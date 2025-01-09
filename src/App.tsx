@@ -10,6 +10,7 @@ import Voting from './pages/Voting';
 import NotFound from './components/NotFound';
 import About from "./components/About";
 import Functionality from "./components/Functionality";
+import AddVoting from "./pages/AddVoting";
 
 const App: React.FC<{}> = () => {
     return (
@@ -19,8 +20,9 @@ const App: React.FC<{}> = () => {
                 <Routes>
                     <Route path="/" element={<Showcase />} />
                     <Route path="/active-votes" element={<ActiveVotes />} />
+                    <Route path="/add-voting" element={<AddVoting />} />
                     <Route path="/account" element={<Account />} />
-                    <Route path="/voting/:id" element={<Voting />} />
+                    <Route path="/voting" element={<Voting />} />
                     <Route path="/about" element={<About />} />
                     <Route path="/how-it-works" element={<Functionality />} />
                     <Route path="*" element={<NotFound />} />
@@ -30,3 +32,5 @@ const App: React.FC<{}> = () => {
         </div>
     );
 };
+
+export default App;

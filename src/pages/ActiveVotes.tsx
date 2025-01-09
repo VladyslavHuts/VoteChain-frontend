@@ -11,6 +11,7 @@ class ActiveVotes extends Component {
                 <Dashboard/>
                 <Vote/>
                 <Link to={"/add-voting"}>AddVoting</Link>
+                <Link to={"/voting"}>Voting</Link>
             </div>
         );
     }

@@ -36,7 +36,7 @@ const Card: React.FC<CardProps> = ({ title, description, imageUrl, onVote }) => 
 
     return (
         <div className="card">
-            <div className="card__header">
+            <div className="cards__header">
                 <h2 className="card__title">{title}</h2>
                 <div className="card__buttons--complaint">
                     <button
