@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';  // Переконайтесь, що імпортуєте Router правильно
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import "./styles/main.css";
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -30,5 +30,3 @@ const App: React.FC<{}> = () => {
         </div>
     );
 };
-
-export default App;
