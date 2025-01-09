@@ -103,12 +103,12 @@ class Vote extends Component<{}, State> {
         const { query, filteredData } = this.state;
 
         return (
-            <div className="voting">
+            <div className="vote">
                 <div className="container">
-                    <div className="voting__container">
-                        <h1 className="voting__title">Active voting</h1>
+                    <div className="vote__container">
+                        <h1 className="vote__title">Active voting</h1>
                         <form
-                            className="voting__form"
+                            className="vote__form"
                             onSubmit={(e: FormEvent) => e.preventDefault()}
                         >
                             <input
@@ -119,12 +119,12 @@ class Vote extends Component<{}, State> {
                                 value={query}
                                 onChange={this.handleInputChange}
                             />
-                            <button type="submit" className="voting__form-button">
+                            <button type="submit" className="vote__form-button">
                                 <img src={search} alt="Search icon" />
                             </button>
                         </form>
                     </div>
-                    <div className="voting__cards">
+                    <div className="vote__cards">
                         <TransitionGroup component={null}>
                             {filteredData.length > 0 ? (
                                 filteredData.map((item, index) => (
@@ -144,7 +144,7 @@ class Vote extends Component<{}, State> {
                                 ))
                             ) : (
                                 <CSSTransition timeout={300} classNames="fade">
-                                    <p className="voting__no-results">No results found</p>
+                                    <p className="vote__no-results">No results found</p>
                                 </CSSTransition>
                             )}
                         </TransitionGroup>
