@@ -12,7 +12,7 @@ interface State {
 class Dashboard extends Component<{}, State> {
     state: State = {
         isDropdownOpen: false,
-        selectedInterval: "7 days", // За замовчуванням показуємо 7 днів
+        selectedInterval: "7 days",
     };
 
     toggleDropdown = () => {
@@ -71,7 +71,7 @@ class Dashboard extends Component<{}, State> {
         // Дані для різних інтервалів
         const dataMap: Record<string, number[]> = {
             "7 days": [100, 150, 200, 75, 180, 150, 250],
-            "1 month": [500, 700, 600, 550], // Дані для 4 тижнів
+            "1 month": [500, 700, 600, 550],
             "1 year": [450, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1100],
         };
 
