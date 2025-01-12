@@ -1,16 +1,18 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import card__img from "../assets/images/card__img-user.svg";
 import { useNavigate } from "react-router-dom";
+import Details from "./Details";
 
 export interface CardProps {
     id: string;
     title: string;
     description: string;
     imageUrl: string;
+    isClosed: boolean;
     onDetails: () => void;
 }
 
-export const Card: React.FC<CardProps & { isClosed: boolean }> = ({ id, title, description, imageUrl, onDetails, isClosed }) => {
+export const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, isClosed, onDetails }) => {
     const navigate = useNavigate();
 
     return (
@@ -45,45 +47,65 @@ export const Card: React.FC<CardProps & { isClosed: boolean }> = ({ id, title, d
     );
 };
 
-class MyVotes extends Component {
-    render() {
-        const cards = [
-            {
-                id: "1",
-                title: "Green Future Initiative",
-                description: "This is a description of the my votes card 1.",
-                imageUrl: card__img,
-                onDetails: () => alert("Details for card 1!"),
-                isClosed: false,
-            },
-            {
-                id: "2",
-                title: "Clean Energy Project",
-                description: "This is a description of the my votes card 2.",
-                imageUrl: card__img,
-                onDetails: () => alert("Details for card 2!"),
-                isClosed: false,
-            },
-            {
-                id: "3",
-                title: "My votes Card 3",
-                description: "This is a description of the my votes card 3.",
-                imageUrl: card__img,
-                onDetails: () => alert("Details for card 3!"),
-                isClosed: true,
-            },
-        ];
-        return (
+const MyVotes: React.FC = () => {
+    const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+    const [isDetailsOpen, setDetailsOpen] = useState(false);
+
+    const cards = [
+        {
+            id: "1",
+            title: "Green Future Initiative",
+            description: "This is a description of the Green Future Initiative.",
+            imageUrl: card__img,
+            isClosed: false,
+        },
+        {
+            id: "2",
+            title: "Clean Energy Project",
+            description: "This is a description of the Clean Energy Project.",
+            imageUrl: card__img,
+            isClosed: false,
+        },
+        {
+            id: "3",
+            title: "My Votes Card 3",
+            description: "This is a description of the My Votes Card 3.",
+            imageUrl: card__img,
+            isClosed: true,
+        },
+    ];
+
+    const handleDetails = (id: string) => {
+        setSelectedCardId(id);
+        setDetailsOpen(true);
+    };
+
+    const selectedCard = cards.find((card) => card.id === selectedCardId);
+
+    return (
+        <div>
             <div className="account__cards">
-                {cards.map((card, index) => (
+                {cards.map((card) => (
                     <Card
-                        key={index}
+                        key={card.id}
                         {...card}
+                        onDetails={() => handleDetails(card.id)}
                     />
                 ))}
             </div>
-        );
-    }
-}
+
+            {selectedCard && (
+                <Details
+                    isOpen={isDetailsOpen}
+                    onClose={() => setDetailsOpen(false)}
+                    title={selectedCard.title}
+                    description={selectedCard.description}
+                    startDate="2025-01-01"
+                    endDate="2025-12-31"
+                />
+            )}
+        </div>
+    );
+};
 
 export default MyVotes;
