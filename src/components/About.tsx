@@ -41,32 +41,31 @@ class About extends Component<{}, State> {
                 <div className="container">
                     <div className="about-content">
                         <h1 className="about-title">
-                            Zdecentralizowany system głosowania na blockchainie Ethereum
+                            Decentralized Voting System on the Ethereum Blockchain
                         </h1>
                         <p className="about-description">
-                            Przejrzystość, bezpieczeństwo i dostępność dla wszystkich
-                            użytkowników.
+                            Transparency, security, and accessibility for all users.
                         </p>
                         <div className="about-blocks">
                             <div className="about-block" ref={this.blocksRef[0]}>
-                                <h2 className="block-title">Przejrzystość</h2>
+                                <h2 className="block-title">Transparency</h2>
                                 <p className="block-description">
-                                    Wszystkie głosy i wyniki są dostępne do weryfikacji przez
-                                    każdego użytkownika systemu.
+                                    All votes and results are available for verification by
+                                    every system user.
                                 </p>
                             </div>
                             <div className="about-block" ref={this.blocksRef[1]}>
-                                <h2 className="block-title">Bezpieczeństwo</h2>
+                                <h2 className="block-title">Security</h2>
                                 <p className="block-description">
-                                    Dzięki technologii blockchain głosowanie nie może być
-                                    fałszowane ani manipulowane.
+                                    Thanks to blockchain technology, voting cannot be falsified
+                                    or manipulated.
                                 </p>
                             </div>
                             <div className="about-block" ref={this.blocksRef[2]}>
-                                <h2 className="block-title">Dostępność</h2>
+                                <h2 className="block-title">Accessibility</h2>
                                 <p className="block-description">
-                                    Platforma jest dostępna dla wszystkich użytkowników bez
-                                    potrzeby fizycznej obecności.
+                                    The platform is accessible to all users without the need for
+                                    physical presence.
                                 </p>
                             </div>
                         </div>

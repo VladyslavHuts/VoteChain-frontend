@@ -6,13 +6,17 @@ import '../styles/vote.css';
 import userImage from '../assets/images/user__img.svg';
 import search from '../assets/images/searh.png';
 
+interface CardData {
+    id: number;
+    title: string;
+    description: string;
+    imageUrl: string;
+    isClosed: boolean; // Статус голосування
+}
+
 interface State {
     query: string;
-    filteredData: {
-        title: string;
-        description: string;
-        imageUrl: string;
-    }[];
+    filteredData: CardData[];
 }
 
 class Vote extends Component<{}, State> {
@@ -21,42 +25,71 @@ class Vote extends Component<{}, State> {
         filteredData: [],
     };
 
-    mockData = [
+    // Оновлення даних з додаванням isClosed
+    mockData: CardData[] = [
         {
+            id: 1,
             title: 'Green Future Initiative',
             description:
                 'Support the initiative to introduce green technologies into city infrastructure. The project involves the installation of solar panels, charging stations for electric vehicles, and reduction of CO₂ emissions.',
             imageUrl: userImage,
+            isClosed: false,
         },
         {
+            id: 2,
             title: 'Clean Water Project',
             description:
                 'Join us in providing clean water to underprivileged communities by installing sustainable water filtration systems.',
             imageUrl: userImage,
+            isClosed: true,
         },
         {
+            id: 3,
             title: 'Urban Forest Development',
             description:
                 'Help us create urban forests to improve air quality, reduce urban heat, and enhance biodiversity in cities.',
             imageUrl: userImage,
+            isClosed: false,
         },
         {
-            title: 'Green Future Initiative',
+            id: 4,
+            title: 'Sustainable Agriculture',
             description:
-                'Support the initiative to introduce green technologies into city infrastructure. The project involves the installation of solar panels, charging stations for electric vehicles, and reduction of CO₂ emissions.',
+                'Promote sustainable farming practices to enhance soil fertility, reduce waste, and improve crop yields.',
             imageUrl: userImage,
+            isClosed: true,
         },
         {
-            title: 'Clean Water Project',
+            id: 5,
+            title: 'Sustainable Agriculture',
             description:
-                'Join us in providing clean water to underprivileged communities by installing sustainable water filtration systems.',
+                'Promote sustainable farming practices to enhance soil fertility, reduce waste, and improve crop yields.',
             imageUrl: userImage,
+            isClosed: true,
         },
         {
+            id: 6,
+            title: 'Sustainable Agriculture',
+            description:
+                'Promote sustainable farming practices to enhance soil fertility, reduce waste, and improve crop yields.',
+            imageUrl: userImage,
+            isClosed: true,
+        },
+        {
+            id: 7,
             title: 'Urban Forest Development',
             description:
                 'Help us create urban forests to improve air quality, reduce urban heat, and enhance biodiversity in cities.',
             imageUrl: userImage,
+            isClosed: false,
+        },
+        {
+            id: 8,
+            title: 'Urban Forest Development',
+            description:
+                'Help us create urban forests to improve air quality, reduce urban heat, and enhance biodiversity in cities.',
+            imageUrl: userImage,
+            isClosed: false,
         },
     ];
 
@@ -64,12 +97,12 @@ class Vote extends Component<{}, State> {
         this.setState({ filteredData: this.mockData });
     }
 
-    handleVote = (title: string) => {
-        console.log(`Voted for: ${title}`);
+    handleVote = (id: number) => {
+        console.log(`Voted for card with ID: ${id}`);
     };
 
-    handleDetails = (title: string) => {
-        console.log(`Details for: ${title}`);
+    handleDetails = (id: number) => {
+        console.log(`Details for card with ID: ${id}`);
     };
 
     handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -106,7 +139,7 @@ class Vote extends Component<{}, State> {
             <div className="vote">
                 <div className="container">
                     <div className="vote__container">
-                        <h1 className="vote__title">Active voting</h1>
+                        <h1 className="vote__title">Active Voting</h1>
                         <form
                             className="vote__form"
                             onSubmit={(e: FormEvent) => e.preventDefault()}
@@ -127,18 +160,20 @@ class Vote extends Component<{}, State> {
                     <div className="vote__cards">
                         <TransitionGroup component={null}>
                             {filteredData.length > 0 ? (
-                                filteredData.map((item, index) => (
+                                filteredData.map((item) => (
                                     <CSSTransition
-                                        key={index}
+                                        key={item.id}
                                         timeout={300}
                                         classNames="fade"
                                     >
                                         <Card
+                                            id={item.id}
                                             title={item.title}
                                             description={item.description}
                                             imageUrl={item.imageUrl}
-                                            onVote={() => this.handleVote(item.title)}
-                                            onDetails={() => this.handleDetails(item.title)}
+                                            isClosed={item.isClosed} // Передаємо статус
+                                            onVote={() => this.handleVote(item.id)}
+                                            onDetails={() => this.handleDetails(item.id)}
                                         />
                                     </CSSTransition>
                                 ))

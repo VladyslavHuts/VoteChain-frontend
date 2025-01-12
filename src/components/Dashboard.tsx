@@ -7,12 +7,14 @@ import dashboardImage from "../assets/images/dashboard__info-img.svg";
 interface State {
     isDropdownOpen: boolean;
     selectedInterval: string;
+    selectedStatus: string;
 }
 
 class Dashboard extends Component<{}, State> {
     state: State = {
         isDropdownOpen: false,
         selectedInterval: "7 days",
+        selectedStatus: "ALL",
     };
 
     toggleDropdown = () => {
@@ -40,7 +42,11 @@ class Dashboard extends Component<{}, State> {
         this.setState({ selectedInterval: interval });
     };
 
-    // Функція для отримання дати
+    changeStatus = (status: string) => {
+        this.setState({ selectedStatus: status });
+        console.log(`Status changed to: ${status}`);
+    };
+
     getDatesForInterval = (interval: string): string[] => {
         const today = new Date();
         const dates: string[] = [];
@@ -68,7 +74,6 @@ class Dashboard extends Component<{}, State> {
     getGraphData = () => {
         const { selectedInterval } = this.state;
 
-        // Дані для різних інтервалів
         const dataMap: Record<string, number[]> = {
             "7 days": [100, 150, 200, 75, 180, 150, 250],
             "1 month": [500, 700, 600, 550],
@@ -135,7 +140,7 @@ class Dashboard extends Component<{}, State> {
     };
 
     render() {
-        const { isDropdownOpen, selectedInterval } = this.state;
+        const { isDropdownOpen, selectedInterval, selectedStatus } = this.state;
 
         return (
             <section className="dashboard">
@@ -144,7 +149,7 @@ class Dashboard extends Component<{}, State> {
                         <div className="dashboard__wrapper">
                             <div className="dashboard__info">
                                 <div className="dashboard__info-text">
-                                    <h2 className="dashboard__subtitle">Voting information</h2>
+                                    <h2 className="dashboard__subtitle">Voting Information</h2>
                                     <p className="dashboard__text">
                                         Voting on our platform is a modern way of participating in
                                         making important decisions, built on the principles of
@@ -161,24 +166,37 @@ class Dashboard extends Component<{}, State> {
                             <div className="dashboard__option">
                                 <h2 className="dashboard__subtitle">Filter Options</h2>
                                 <div className="dashboard__filters">
-                                    <button className="dashboard__filters-btn">Status</button>
                                     <div className="dropdown">
                                         <button
                                             className="dashboard__filters-btn"
                                             onClick={this.toggleDropdown}
-                                            aria-expanded={isDropdownOpen}
-                                            aria-haspopup="true"
                                         >
-                                            Category
+                                            Status: {selectedStatus}
                                         </button>
                                         {isDropdownOpen && (
                                             <div className="dropdown__content">
-                                                <button className="dropdown__content-btn">Projects</button>
-                                                <button className="dropdown__content-btn">Features</button>
-                                                <button className="dropdown__content-btn">Policies</button>
+                                                <button
+                                                    className="dropdown__content-btn"
+                                                    onClick={() => this.changeStatus("ALL")}
+                                                >
+                                                    ALL
+                                                </button>
+                                                <button
+                                                    className="dropdown__content-btn"
+                                                    onClick={() => this.changeStatus("Active")}
+                                                >
+                                                    Active
+                                                </button>
+                                                <button
+                                                    className="dropdown__content-btn"
+                                                    onClick={() => this.changeStatus("Inactive")}
+                                                >
+                                                    Inactive
+                                                </button>
                                             </div>
                                         )}
                                     </div>
+                                    <button className="dashboard__filters-btn">Category</button>
                                     <button className="dashboard__filters-btn">By Date</button>
                                     <button className="dashboard__filters-btn">Popularity</button>
                                 </div>
@@ -215,7 +233,8 @@ class Dashboard extends Component<{}, State> {
                                 <div className="dashboard__graph">{this.renderGraph()}</div>
                             </div>
                             <div className="dashboard__graph-btns-stat">
-                                <h3 className="dashboard__graph-btn-stat">Active voting</h3>
+
+                                <h3 className="dashboard__graph-btn-stat">Active Voting</h3>
                             </div>
                         </div>
                     </div>

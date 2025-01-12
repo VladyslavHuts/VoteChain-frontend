@@ -22,7 +22,7 @@ const App: React.FC<{}> = () => {
                     <Route path="/active-votes" element={<ActiveVotes />} />
                     <Route path="/add-voting" element={<AddVoting />} />
                     <Route path="/account" element={<Account />} />
-                    <Route path="/voting" element={<Voting />} />
+                    <Route path="/voting/:id" element={<Voting />} />
                     <Route path="/about" element={<About />} />
                     <Route path="/how-it-works" element={<Functionality />} />
                     <Route path="*" element={<NotFound />} />

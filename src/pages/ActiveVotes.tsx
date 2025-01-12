@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import '../styles/activeVotes.css'
 import Dashboard from "../components/Dashboard";
 import Vote from "../components/Vote";
-import {Link} from "react-router-dom";
 
 class ActiveVotes extends Component {
     render() {
@@ -10,8 +9,6 @@ class ActiveVotes extends Component {
             <div className="activeVotes">
                 <Dashboard/>
                 <Vote/>
-                <Link to={"/add-voting"}>AddVoting</Link>
-                <Link to={"/voting"}>Voting</Link>
             </div>
         );
     }

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import card__img from "../assets/images/card__img-user.svg";
-import { Card } from "./MyVotes"; // Імпортуємо Card
+import { Card } from "./MyVotes";
 import { Link } from "react-router-dom";
 
 class Created extends Component {

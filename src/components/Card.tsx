@@ -5,15 +5,16 @@ import "../styles/card.css";
 import complaint from "../assets/images/complaint.png";
 
 interface CardProps {
+    id: number;
     title: string;
     description: string;
     imageUrl: string;
+    isClosed: boolean;
     onVote: () => void;
-    onDetails: () => void;
+    onDetails?: () => void;
 }
 
-
-const Card: React.FC<CardProps> = ({ title, description, imageUrl, onVote }) => {
+const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, isClosed, onVote, onDetails }) => {
     const [hovered, setHovered] = useState(false);
     const [isComplaintModalOpen, setIsComplaintModalOpen] = useState(false);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -35,7 +36,7 @@ const Card: React.FC<CardProps> = ({ title, description, imageUrl, onVote }) => 
     };
 
     return (
-        <div className="card">
+        <div className={`card ${isClosed ? "card--closed" : "card--active"}`}>
             <div className="cards__header">
                 <h2 className="card__title">{title}</h2>
                 <div className="card__buttons--complaint">
@@ -55,19 +56,25 @@ const Card: React.FC<CardProps> = ({ title, description, imageUrl, onVote }) => 
                     <p className="card__description">{description}</p>
                 </div>
             </div>
-            <div className="card__actions">
-                <button className="card__button card__button--vote" onClick={onVote}>
-                    Vote
-                </button>
-                <button
-                    className="card__button card__button--details"
-                    onClick={openDetailsModal}
-                >
-                    Details
-                </button>
-            </div>
+            {!isClosed && (
+                <div className="card__actions">
+                    <button className="card__button card__button--vote" onClick={onVote}>
+                        Vote
+                    </button>
+                    <button
+                        className="card__button card__button--details"
+                        onClick={() => {
+                            openDetailsModal();
+                            if (onDetails) onDetails();
+                        }}
+                    >
+                        Details
+                    </button>
+                </div>
+            )}
+            {isClosed && <p className="card__message">This voting has been closed.</p>}
 
-            {isComplaintModalOpen && <ComplaintModal onClose={closeComplaintModal}/>}
+            {isComplaintModalOpen && <ComplaintModal onClose={closeComplaintModal} votingId={id} />}
 
             {isDetailsModalOpen && (
                 <Details

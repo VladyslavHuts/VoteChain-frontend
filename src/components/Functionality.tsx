@@ -8,45 +8,45 @@ class Functionality extends Component {
                 <div className="container">
                     <div className="functionality__container">
                         <div className="functionality-header">
-                            <h1 className="functionality-title">Funkcje Systemu</h1>
+                            <h1 className="functionality-title">System Features</h1>
                             <p className="functionality-description">
-                                Przegląd funkcji, które oferuje nasz system. Poniżej przedstawiamy
-                                kluczowe cechy i zalety, które zapewniają łatwą obsługę i efektywność
-                                naszego systemu. Każda z funkcji została zaprojektowana z myślą o
-                                użytkowniku, aby zapewnić mu najlepsze doświadczenie.
+                                An overview of the features our system offers. Below, we present
+                                the key features and advantages that ensure ease of use and
+                                efficiency. Each feature has been designed with the user in mind
+                                to provide the best experience.
                             </p>
                         </div>
                         <div className="functionality-list">
                             <div className="functionality-item">
-                                <h2 className="functionality-item-title">Bezpieczeństwo</h2>
+                                <h2 className="functionality-item-title">Security</h2>
                                 <p className="functionality-item-description">
-                                    Nasz system zapewnia wysokiej jakości bezpieczeństwo dzięki
-                                    wykorzystaniu najnowszych technologii szyfrowania. Gwarantuje to
-                                    pełną ochronę danych użytkowników i bezpieczeństwo ich transakcji.
+                                    Our system provides high-quality security using the latest
+                                    encryption technologies. This ensures full protection of user
+                                    data and the security of their transactions.
                                 </p>
                             </div>
                             <div className="functionality-item">
-                                <h2 className="functionality-item-title">Przejrzystość</h2>
+                                <h2 className="functionality-item-title">Transparency</h2>
                                 <p className="functionality-item-description">
-                                    Wszystkie procesy są w pełni przejrzyste. Użytkownicy mają dostęp
-                                    do szczegółowych raportów i historii, co pozwala na pełną kontrolę
-                                    nad działaniami w systemie.
+                                    All processes are fully transparent. Users have access to
+                                    detailed reports and histories, enabling full control over
+                                    activities within the system.
                                 </p>
                             </div>
                             <div className="functionality-item">
-                                <h2 className="functionality-item-title">Łatwość Obsługi</h2>
+                                <h2 className="functionality-item-title">Ease of Use</h2>
                                 <p className="functionality-item-description">
-                                    System jest prosty w obsłudze i dostępny dla każdego. Intuicyjny
-                                    interfejs umożliwia szybkie zapoznanie się z funkcjami bez
-                                    potrzeby szkolenia czy skomplikowanej konfiguracji.
+                                    The system is easy to use and accessible to everyone. An
+                                    intuitive interface allows quick familiarization with the
+                                    features without the need for training or complex configuration.
                                 </p>
                             </div>
                             <div className="functionality-item">
-                                <h2 className="functionality-item-title">Dostępność</h2>
+                                <h2 className="functionality-item-title">Availability</h2>
                                 <p className="functionality-item-description">
-                                    Nasza platforma jest dostępna 24/7, co pozwala użytkownikom na
-                                    korzystanie z funkcji systemu o każdej porze dnia i nocy. Dzięki
-                                    temu możliwe jest szybkie reagowanie na zmiany i potrzeby rynku.
+                                    Our platform is available 24/7, allowing users to access system
+                                    features at any time of the day or night. This enables quick
+                                    responses to changes and market needs.
                                 </p>
                             </div>
                         </div>

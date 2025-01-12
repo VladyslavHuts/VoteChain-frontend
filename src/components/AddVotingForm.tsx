@@ -1,5 +1,6 @@
 import React, { Component, ChangeEvent, FormEvent } from "react";
 import "../styles/addVotingForm.css";
+import { v4 as uuidv4 } from "uuid";
 
 interface Option {
     title: string;
@@ -7,22 +8,26 @@ interface Option {
 }
 
 interface State {
+    id: string;
     title: string;
     description: string;
     options: Option[];
     photo: File | null;
     startDate: string;
     endDate: string;
+    isClosed: boolean;
 }
 
 class AddVotingForm extends Component<{}, State> {
     state: State = {
+        id: uuidv4(),
         title: "",
         description: "",
-        options: [{ title: "", description: "" }],
+        options: [{ title: "", description: "" }, { title: "", description: "" }],
         photo: null,
         startDate: "",
         endDate: "",
+        isClosed: true,
     };
 
     handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -33,9 +38,6 @@ class AddVotingForm extends Component<{}, State> {
     handlePhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             this.setState({ photo: e.target.files[0] });
-        }
-        if (e.target.files && e.target.files[0]) {
-            this.setState({ photo: e.target.files[0] });
         } else {
             this.setState({ photo: null });
         }
@@ -43,8 +45,11 @@ class AddVotingForm extends Component<{}, State> {
 
     handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        if (name === "startDate" || name === "endDate") {
-            this.setState({ [name]: value } as unknown as Pick<State, "startDate" | "endDate">);
+        this.setState({ [name]: value } as unknown as Pick<State, "startDate" | "endDate">);
+
+        if (name === "startDate") {
+            const currentDate = new Date().toISOString().split("T")[0];
+            this.setState({ isClosed: value > currentDate });
         }
     };
 
@@ -61,23 +66,34 @@ class AddVotingForm extends Component<{}, State> {
     };
 
     handleRemoveOption = (index: number) => {
-        this.setState((prevState) => ({
-            options: prevState.options.filter((_, i) => i !== index),
-        }));
+        this.setState((prevState) => {
+            const updatedOptions = prevState.options.filter((_, i) => i !== index);
+            return {
+                options: updatedOptions.length >= 2 ? updatedOptions : prevState.options,
+            };
+        });
     };
 
-    handleSubmit = async (e: FormEvent) => {
+    resetForm = () => {
+        this.setState({
+            id: uuidv4(),
+            title: "",
+            description: "",
+            options: [{ title: "", description: "" }, { title: "", description: "" }],
+            photo: null,
+            startDate: "",
+            endDate: "",
+            isClosed: true,
+        });
+    };
+
+    handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const { title, description, options, photo, startDate, endDate } = this.state;
+        const { id, title, description, options, photo, startDate, endDate, isClosed } = this.state;
 
         if (!title.trim() || !description.trim()) {
             alert("Title and description are required.");
-            return;
-        }
-
-        if (!photo) {
-            alert("Photo is required.");
             return;
         }
 
@@ -92,23 +108,36 @@ class AddVotingForm extends Component<{}, State> {
             return;
         }
 
-        if (options.length === 0 || options.some((opt) => !opt.title.trim() || !opt.description.trim())) {
+        if (options.length < 2) {
+            alert("At least 2 options are required.");
+            return;
+        }
+
+        if (options.some((opt) => !opt.title.trim() || !opt.description.trim())) {
             alert("All options must have a title and description.");
             return;
         }
 
+        if (!photo) {
+            alert("Please upload a photo.");
+            return;
+        }
+
         const payload = new FormData();
+        payload.append("id", id);
         payload.append("title", title);
         payload.append("description", description);
         payload.append("photo", photo);
         payload.append("startDate", startDate);
         payload.append("endDate", endDate);
+        payload.append("isClosed", JSON.stringify(isClosed));
         payload.append("options", JSON.stringify(options));
 
         console.log("Data to be sent:", payload);
 
         try {
             alert("Form submitted successfully! Check the console for FormData.");
+            this.resetForm();
         } catch (error) {
             console.error("Error:", error);
             alert("An error occurred while submitting the form.");
@@ -161,7 +190,6 @@ class AddVotingForm extends Component<{}, State> {
                                         required
                                     />
                                 </div>
-
                                 <div className="add-voting-form__group">
                                     <label htmlFor="startDate" className="add-voting-form__label">Start Date</label>
                                     <input

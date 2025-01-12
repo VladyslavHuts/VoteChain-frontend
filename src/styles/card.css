@@ -142,4 +142,25 @@
     color: #00d0ff;
     box-shadow: 0px 0px 10px rgba(0, 208, 255, 0.5);
 }
+.card--active {
+    background-color: #fff;
+    border: 1px solid #ccc;
+}
+
+.card--closed {
+    background-color: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    opacity: 0.6;
+}
+
+.card__status {
+    color: red;
+    font-weight: bold;
+}
+
+.card__message {
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+}
 

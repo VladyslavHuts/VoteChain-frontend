@@ -1,24 +1,26 @@
-import React, { useState } from 'react';
-import '../styles/complaintModal.css';
+import React, { useState } from "react";
+import "../styles/complaintModal.css";
 
 interface ComplaintModalProps {
     onClose: () => void;
+    votingId: number;
 }
 
-const ComplaintModal: React.FC<ComplaintModalProps> = ({ onClose }) => {
+const ComplaintModal: React.FC<ComplaintModalProps> = ({ onClose, votingId }) => {
     const [selectedComplaint, setSelectedComplaint] = useState<string | null>(null);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!selectedComplaint) {
-            alert('Please select a complaint type before submitting.');
+            alert("Please select a complaint type before submitting.");
             return;
         }
 
-        console.log('Complaint submitted with value: 1');
+        console.log(`Complaint submitted for voting ID: ${votingId}`);
+        console.log(`Complaint type: ${selectedComplaint}`);
 
-        alert('Your complaint has been submitted successfully!');
+        alert("Your complaint has been submitted successfully!");
 
         onClose();
     };
@@ -38,7 +40,7 @@ const ComplaintModal: React.FC<ComplaintModalProps> = ({ onClose }) => {
                             type="radio"
                             name="complaint"
                             value="violation"
-                            onChange={() => setSelectedComplaint('violation')}
+                            onChange={() => setSelectedComplaint("violation")}
                         />
                     </label>
                     <label className="complaint__option">
@@ -48,7 +50,7 @@ const ComplaintModal: React.FC<ComplaintModalProps> = ({ onClose }) => {
                             type="radio"
                             name="complaint"
                             value="suspicious"
-                            onChange={() => setSelectedComplaint('suspicious')}
+                            onChange={() => setSelectedComplaint("suspicious")}
                         />
                     </label>
                     <label className="complaint__option">
@@ -58,7 +60,7 @@ const ComplaintModal: React.FC<ComplaintModalProps> = ({ onClose }) => {
                             type="radio"
                             name="complaint"
                             value="fraud"
-                            onChange={() => setSelectedComplaint('fraud')}
+                            onChange={() => setSelectedComplaint("fraud")}
                         />
                     </label>
                     <label className="complaint__option">
@@ -68,7 +70,7 @@ const ComplaintModal: React.FC<ComplaintModalProps> = ({ onClose }) => {
                             type="radio"
                             name="complaint"
                             value="error"
-                            onChange={() => setSelectedComplaint('error')}
+                            onChange={() => setSelectedComplaint("error")}
                         />
                     </label>
                     <label className="complaint__option">
@@ -78,7 +80,7 @@ const ComplaintModal: React.FC<ComplaintModalProps> = ({ onClose }) => {
                             type="radio"
                             name="complaint"
                             value="other"
-                            onChange={() => setSelectedComplaint('other')}
+                            onChange={() => setSelectedComplaint("other")}
                         />
                     </label>
                     <button type="submit" className="complaint__submit">
