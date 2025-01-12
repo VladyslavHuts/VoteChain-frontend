@@ -20,11 +20,11 @@ class NotFound extends Component {
                             marginTop: '20px'
                         }}
                         onMouseEnter={(e) => {
-                            const target = e.target as HTMLAnchorElement; // Явно вказуємо тип
+                            const target = e.target as HTMLAnchorElement;
                             target.style.transform = 'scale(1.05)';
                         }}
                         onMouseLeave={(e) => {
-                            const target = e.target as HTMLAnchorElement; // Явно вказуємо тип
+                            const target = e.target as HTMLAnchorElement;
                             target.style.transform = 'scale(1)';
                         }}
                     >

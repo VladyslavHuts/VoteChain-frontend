@@ -81,7 +81,7 @@
     flex-direction: column;
     gap: 20px;
 }
-.dashboard__graph-btn{
+.dashboard__graph-btn-blue{
     border: 2px solid #1F44EB;
     border-radius: 10px;
     width: 96px;
@@ -91,9 +91,23 @@
     font-size: 16px;
     transition: all 0.3s ease;
 }
-.dashboard__graph-btn:hover{
+.dashboard__graph-btn-blue:hover{
     background: #121212;
     color: #1F44EB;
+}
+.dashboard__graph-btn-pink{
+    border: 2px solid #C800FF;
+    border-radius: 10px;
+    width: 96px;
+    height: 34px;
+    background: linear-gradient(133deg, rgba(252, 66, 233, 0.5) 0%, rgba(200, 0, 255, 0.5) 100%);
+    font-weight: 700;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+.dashboard__graph-btn-pink:hover{
+    background: #121212;
+    border: 2px solid #C800FF;
 }
 .dashboard__statistics-wrapper{
     display: flex;
@@ -104,13 +118,39 @@
     height: 300px;
 }
 .dashboard__graph-btns-stat{
+    display: flex;
+    justify-content: right;
+    gap: 30px;
+    padding-right: 40px;
 
 }
-.dashboard__graph-btn-stat{
-    text-align: center;
+.dashboard__graph-btn-active{
+    border: 2px solid #1F44EB;
+    border-radius: 10px;
+    background: linear-gradient(180deg, rgba(0, 234, 255, 0.5) 0%, rgba(31, 68, 235, 0.5) 100%);
     font-weight: 700;
-    font-size: 28px;
-    color: #00d0ff;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    width: 200px;
+    height: 34px;
+}
+.dashboard__graph-btn-active:hover{
+    background: #121212;
+    color: #1F44EB;
+}
+.dashboard__graph-btn-new{
+    border: 2px solid #C800FF;
+    border-radius: 10px;
+    background: linear-gradient(133deg, rgba(252, 66, 233, 0.5) 0%, rgba(200, 0, 255, 0.5) 100%);
+    font-weight: 700;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    width: 200px;
+    height: 34px;
+}
+.dashboard__graph-btn-new:hover{
+    background: #121212;
+    color: #C800FF;
 }
 .dropdown {
     position: relative;

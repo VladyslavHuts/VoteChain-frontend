@@ -19,7 +19,6 @@
     z-index: 1;
     padding: 20px;
 }
-
 .about-title {
     font-size: 3rem;
     font-weight: bold;
@@ -27,7 +26,6 @@
     color: #ecf0f1;
     text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
 }
-
 .about-description {
     font-size: 1.3rem;
     color: #bdc3c7;
@@ -35,14 +33,12 @@
     margin-bottom: 30px;
     max-width: 700px;
 }
-
 .about-blocks {
     display: flex;
     justify-content: space-between;
     margin-bottom: 30px;
     flex-wrap: wrap;
 }
-
 .about-block {
     background: linear-gradient(135deg, #FF00B7, #00D0FF);
     color: white;
@@ -55,13 +51,11 @@
     position: relative;
     overflow: hidden;
 }
-
 .about-block:hover {
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
     transform: translateY(-10px);
     filter: brightness(1.1);
 }
-
 .about-block .block-title {
     font-size: 1.6rem;
     font-weight: bold;
@@ -69,14 +63,12 @@
     letter-spacing: 1px;
     text-transform: uppercase;
 }
-
 .block-description {
     font-size: 1.1rem;
     color: #ecf0f1;
     line-height: 1.6;
     text-align: left;
 }
-
 @keyframes fadeInUp {
     0% {
         opacity: 0;

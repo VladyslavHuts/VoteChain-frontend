@@ -11,7 +11,7 @@ interface CardData {
     title: string;
     description: string;
     imageUrl: string;
-    isClosed: boolean; // Статус голосування
+    isClosed: boolean;
 }
 
 interface State {
@@ -25,7 +25,6 @@ class Vote extends Component<{}, State> {
         filteredData: [],
     };
 
-    // Оновлення даних з додаванням isClosed
     mockData: CardData[] = [
         {
             id: 1,

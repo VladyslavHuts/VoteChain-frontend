@@ -6,15 +6,19 @@ import dashboardImage from "../assets/images/dashboard__info-img.svg";
 
 interface State {
     isDropdownOpen: boolean;
+    isCategoryDropdownOpen: boolean;
     selectedInterval: string;
     selectedStatus: string;
+    chartType: string;
 }
 
 class Dashboard extends Component<{}, State> {
     state: State = {
         isDropdownOpen: false,
+        isCategoryDropdownOpen: false,
         selectedInterval: "7 days",
         selectedStatus: "ALL",
+        chartType: "activeVotes",
     };
 
     toggleDropdown = () => {
@@ -23,10 +27,19 @@ class Dashboard extends Component<{}, State> {
         }));
     };
 
+    toggleCategoryDropdown = () => {
+        this.setState((prevState) => ({
+            isCategoryDropdownOpen: !prevState.isCategoryDropdownOpen,
+        }));
+    };
+
     closeDropdown = (e: MouseEvent) => {
         const target = e.target as HTMLElement;
-        if (!target.closest(".dropdown")) {
-            this.setState({ isDropdownOpen: false });
+        if (!target.closest(".dropdown") && !target.closest(".category-dropdown")) {
+            this.setState({
+                isDropdownOpen: false,
+                isCategoryDropdownOpen: false,
+            });
         }
     };
 
@@ -45,6 +58,10 @@ class Dashboard extends Component<{}, State> {
     changeStatus = (status: string) => {
         this.setState({ selectedStatus: status });
         console.log(`Status changed to: ${status}`);
+    };
+
+    changeChartType = (type: string) => {
+        this.setState({ chartType: type });
     };
 
     getDatesForInterval = (interval: string): string[] => {
@@ -72,27 +89,41 @@ class Dashboard extends Component<{}, State> {
     };
 
     getGraphData = () => {
-        const { selectedInterval } = this.state;
+        const { selectedInterval, chartType } = this.state;
 
-        const dataMap: Record<string, number[]> = {
-            "7 days": [100, 150, 200, 75, 180, 150, 250],
-            "1 month": [500, 700, 600, 550],
-            "1 year": [450, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1100],
+        const dataMap: Record<string, Record<string, number[]>> = {
+            "activeVotes": {
+                "7 days": [100, 150, 200, 75, 180, 150, 250],
+                "1 month": [500, 700, 600, 550],
+                "1 year": [450, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1100],
+            },
+            "newVotes": {
+                "7 days": [50, 100, 120, 60, 90, 80, 150],
+                "1 month": [300, 400, 350, 380],
+                "1 year": [250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800],
+            },
+        };
+
+        const colorsMap: Record<string, string[]> = {
+            "activeVotes": ["#03c0c6", "#2600ff"],
+            "newVotes": ["#FC42E9", "#C800FF"],
         };
 
         const labels = this.getDatesForInterval(selectedInterval);
+        const data = dataMap[chartType][selectedInterval];
+        const [startColor, endColor] = colorsMap[chartType];
 
         return {
             labels: labels,
             datasets: [
                 {
-                    label: "Votes",
-                    data: dataMap[selectedInterval],
+                    label: chartType === "activeVotes" ? "Active Votes" : "New Votes",
+                    data: data,
                     backgroundColor: (context: any) => {
                         const ctx = context.chart.ctx;
                         const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-                        gradient.addColorStop(0, "#03c0c6");
-                        gradient.addColorStop(1, "#2600ff");
+                        gradient.addColorStop(0, startColor);
+                        gradient.addColorStop(1, endColor);
                         return gradient;
                     },
                     borderRadius: 8,
@@ -140,7 +171,9 @@ class Dashboard extends Component<{}, State> {
     };
 
     render() {
-        const { isDropdownOpen, selectedInterval, selectedStatus } = this.state;
+        const { isDropdownOpen, isCategoryDropdownOpen, selectedInterval, selectedStatus, chartType } = this.state;
+
+        const buttonClass = chartType === "activeVotes" ? "dashboard__graph-btn-blue" : "dashboard__graph-btn-pink";
 
         return (
             <section className="dashboard">
@@ -171,7 +204,7 @@ class Dashboard extends Component<{}, State> {
                                             className="dashboard__filters-btn"
                                             onClick={this.toggleDropdown}
                                         >
-                                            Status: {selectedStatus}
+                                            {selectedStatus === "ALL" ? `Status: ${selectedStatus}` : selectedStatus}
                                         </button>
                                         {isDropdownOpen && (
                                             <div className="dropdown__content">
@@ -196,7 +229,36 @@ class Dashboard extends Component<{}, State> {
                                             </div>
                                         )}
                                     </div>
-                                    <button className="dashboard__filters-btn">Category</button>
+                                    <div className="dropdown category-dropdown">
+                                        <button
+                                            className="dashboard__filters-btn"
+                                            onClick={this.toggleCategoryDropdown}
+                                        >
+                                            Category
+                                        </button>
+                                        {isCategoryDropdownOpen && (
+                                            <div className="dropdown__content">
+                                                <button
+                                                    className="dropdown__content-btn"
+                                                    onClick={() => console.log("Projects selected")}
+                                                >
+                                                    Projects
+                                                </button>
+                                                <button
+                                                    className="dropdown__content-btn"
+                                                    onClick={() => console.log("Features selected")}
+                                                >
+                                                    Features
+                                                </button>
+                                                <button
+                                                    className="dropdown__content-btn"
+                                                    onClick={() => console.log("Policies selected")}
+                                                >
+                                                    Policies
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
                                     <button className="dashboard__filters-btn">By Date</button>
                                     <button className="dashboard__filters-btn">Popularity</button>
                                 </div>
@@ -206,25 +268,19 @@ class Dashboard extends Component<{}, State> {
                             <div className="dashboard__statistics-wrapper">
                                 <div className="dashboard__graph-btns">
                                     <button
-                                        className={`dashboard__graph-btn ${
-                                            selectedInterval === "1 year" ? "active" : ""
-                                        }`}
+                                        className={`${buttonClass} ${selectedInterval === "1 year" ? "active" : ""}`}
                                         onClick={() => this.changeInterval("1 year")}
                                     >
                                         1 year
                                     </button>
                                     <button
-                                        className={`dashboard__graph-btn ${
-                                            selectedInterval === "1 month" ? "active" : ""
-                                        }`}
+                                        className={`${buttonClass} ${selectedInterval === "1 month" ? "active" : ""}`}
                                         onClick={() => this.changeInterval("1 month")}
                                     >
                                         1 month
                                     </button>
                                     <button
-                                        className={`dashboard__graph-btn ${
-                                            selectedInterval === "7 days" ? "active" : ""
-                                        }`}
+                                        className={`${buttonClass} ${selectedInterval === "7 days" ? "active" : ""}`}
                                         onClick={() => this.changeInterval("7 days")}
                                     >
                                         7 days
@@ -233,8 +289,18 @@ class Dashboard extends Component<{}, State> {
                                 <div className="dashboard__graph">{this.renderGraph()}</div>
                             </div>
                             <div className="dashboard__graph-btns-stat">
-
-                                <h3 className="dashboard__graph-btn-stat">Active Voting</h3>
+                                <button
+                                    className={`dashboard__graph-btn-new ${chartType === "newVotes" ? "active" : ""}`}
+                                    onClick={() => this.changeChartType("newVotes")}
+                                >
+                                    New votes
+                                </button>
+                                <button
+                                    className={`dashboard__graph-btn-active ${chartType === "activeVotes" ? "active" : ""}`}
+                                    onClick={() => this.changeChartType("activeVotes")}
+                                >
+                                    Active Voting
+                                </button>
                             </div>
                         </div>
                     </div>

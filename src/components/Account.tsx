@@ -27,7 +27,7 @@ class Account extends Component<{}, AccountState> {
         this.setState({ buttonState: "waiting" });
 
         setTimeout(() => {
-            alert("Identity confirmed!"); // Виконуємо дію (наприклад, показуємо алерт)
+            alert("Identity confirmed!");
 
             this.setState({ buttonState: "success" });
         }, 1000);

@@ -9,25 +9,21 @@
     text-align: center;
     margin-bottom: 40px;
 }
-
 .functionality-title {
     font-size: 3rem;
     font-weight: bold;
     color: #2c3e50;
 }
-
 .functionality-description {
     font-size: 1.2rem;
     color: #7f8c8d;
     margin-top: 10px;
 }
-
 .functionality-list {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
 }
-
 .functionality-item {
     background-color: #fff;
     padding: 25px;
@@ -40,27 +36,22 @@
     transform: translateY(50px);
     animation: slideIn 0.6s ease-out forwards;
 }
-
 .functionality-item:nth-child(odd) {
     margin-left: 10%;
 }
-
 .functionality-item:nth-child(even) {
     margin-right: 10%;
 }
-
 .functionality-item-title {
     font-size: 1.6rem;
     font-weight: bold;
     margin-bottom: 20px;
     color: #2980b9;
 }
-
 .functionality-item-description {
     font-size: 1.1rem;
     color: #34495e;
 }
-
 @keyframes slideIn {
     0% {
         opacity: 0;
