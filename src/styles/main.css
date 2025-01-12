@@ -12,6 +12,10 @@ html, body {
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+<<<<<<< HEAD
+=======
+    overflow: hidden;
+>>>>>>> feature/homepage-redesign
 }
 a {
     text-decoration: none;
@@ -50,4 +54,34 @@ table {
 th, td {
     padding: 0;
     text-align: left;
+}
+html {
+    scroll-behavior: smooth;
+}
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../assets/fonts/Montserrat/Montserrat-VariableFont_wght.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+.App{
+    font-family: 'Montserrat', sans-serif;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #111111;
+    color: #E8E8E8;
+    overflow-y: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    height: 100vh;
+}
+.App::-webkit-scrollbar {
+    display: none;
+}
+.container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 40px;
 }
