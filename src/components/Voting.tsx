@@ -6,8 +6,10 @@ interface VotingState {
     expandedIndex: number | null;
     votingData: {
         title: string;
+        description: string;
         startDate: string;
         endDate: string;
+        imageUrl: string;
     } | null;
     options: { name: string; details: string; votes: number }[];
     selectedOption: string | null;
@@ -39,37 +41,30 @@ class Voting extends Component<VotingProps, VotingState> {
     }
 
     fetchVotingData = (id: string) => {
-        const mockData = [
-            {
-                id: "1",
-                title: "Green Future Initiative",
-                startDate: "01.15.2024",
-                endDate: "02.20.2024",
-                options: [
-                    { name: "Green future initiative", details: "Details about Green future initiative.", votes: 1198 },
-                    { name: "Sustainable living plan", details: "Details about Sustainable living plan.", votes: 720 },
-                    { name: "Renewable energy sources", details: "Details about Renewable energy sources.", votes: 1890 },
-                    { name: "Clean water access project", details: "Details about Clean water access project.", votes: 780 },
-                    { name: "Forest preservation program", details: "Details about Forest preservation program.", votes: 670 },
-                    { name: "Global education support", details: "Details about Global education support.", votes: 220 },
-                ],
-            },
-        ];
+        fetch(`http://localhost:80/votes/${id}/details`)
+            .then((response) => response.json())
+            .then((data) => {
+                const voting = data;
+                const formattedOptions = voting.options.map((option: any) => ({
+                    name: option.optionText,
+                    votes: option.voteCount,
+                }));
 
-        const voting = mockData.find((item) => item.id === id);
-
-        if (voting) {
-            this.setState({
-                votingData: {
-                    title: voting.title,
-                    startDate: voting.startDate,
-                    endDate: voting.endDate,
-                },
-                options: voting.options,
+                this.setState({
+                    votingData: {
+                        title: voting.title,
+                        description: voting.description,
+                        startDate: new Date(voting.createdAt).toLocaleDateString(),
+                        endDate: new Date(voting.endTime).toLocaleDateString(),
+                        imageUrl: voting.imageUrl,
+                    },
+                    options: formattedOptions,
+                });
+            })
+            .catch((error) => {
+                console.error("Error fetching voting data:", error);
+                this.props.onNotFound();
             });
-        } else {
-            this.props.onNotFound();
-        }
     };
 
     toggleOption = (index: number) => {

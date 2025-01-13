@@ -1,11 +1,38 @@
 import React, { Component } from "react";
-import card__img from "../assets/images/card__img-user.svg";
 import { Card } from "./MyVotes";
 import { Link } from "react-router-dom";
 import Details from "./Details";
 
+// Оголошуємо тип для кожного елементу в масиві опитувань
+interface Poll {
+    pollId: string;
+    pollTitle: string;
+    pollDescription: string;
+    pollEndTime: string;
+    pollIsClosed: boolean;
+    pollContractAddress: string;
+    pollViews: number;
+    pollComplains: number;
+    pollWinner: string | null;
+    pollImageUrl: string; // Це поле може бути відсутнім
+    createdAt: string; // Додано поле для стартової дати
+}
+
+const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+
+    return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+};
+
 class Created extends Component {
     state = {
+        polls: [] as Poll[], // Оголошуємо, що це масив об'єктів типу Poll
         selectedCardId: null,
         isDetailsOpen: false,
     };
@@ -21,42 +48,52 @@ class Created extends Component {
         this.setState({ isDetailsOpen: false });
     };
 
-    render() {
-        const cards = [
-            {
-                id: "1",
-                title: "Green Future Initiative",
-                description: "Description for Sample Card 1",
-                imageUrl: card__img,
-                isClosed: false,
-            },
-            {
-                id: "2",
-                title: "Clean Energy Project",
-                description: "Description for Sample Card 2",
-                imageUrl: card__img,
-                isClosed: false,
-            },
-            {
-                id: "3",
-                title: "Sample Card 3",
-                description: "Description for Sample Card 3",
-                imageUrl: card__img,
-                isClosed: true,
-            },
-        ];
+    fetchPolls = async () => {
+        const authToken = localStorage.getItem("authToken");
+        if (!authToken) {
+            console.error("No authToken found in localStorage.");
+            return;
+        }
 
-        const { selectedCardId, isDetailsOpen } = this.state;
-        const selectedCard = cards.find((card) => card.id === selectedCardId);
+        try {
+            const response = await fetch("http://localhost:80/Account", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${authToken}`,
+                },
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                this.setState({ polls: data.data }); // Оновлюємо стейт масивом опитувань
+            } else {
+                console.error("Failed to fetch polls:", data.message);
+            }
+        } catch (error) {
+            console.error("Error fetching polls:", error);
+        }
+    };
+
+    componentDidMount() {
+        this.fetchPolls();
+    }
+
+    render() {
+        const { selectedCardId, isDetailsOpen, polls } = this.state;
+        const selectedCard = polls.find((poll) => poll.pollId === selectedCardId);
 
         return (
             <div>
                 <div className="account__cards">
-                    {cards.map((card) => (
+                    {polls.map((poll) => (
                         <Card
-                            key={card.id}
-                            {...card}
-                            onDetails={() => this.handleDetails(card.id)}
+                            key={poll.pollId}
+                            id={poll.pollId}
+                            title={poll.pollTitle}
+                            description={poll.pollDescription}
+                            imageUrl={poll.pollImageUrl}
+                            isClosed={new Date(poll.pollEndTime) < new Date()} // Перевірка на закриття голосування
+                            onDetails={() => this.handleDetails(poll.pollId)}
                         />
                     ))}
                     <div className="account__addCard">
@@ -75,10 +112,11 @@ class Created extends Component {
                     <Details
                         isOpen={isDetailsOpen}
                         onClose={this.closeDetails}
-                        title={selectedCard.title}
-                        description={selectedCard.description}
-                        startDate="2025-01-01"
-                        endDate="2025-12-31"
+                        title={selectedCard.pollTitle}
+                        description={selectedCard.pollDescription}
+                        startDate={formatDate(selectedCard.createdAt)} // Використовуємо форматовану дату
+                        endDate={formatDate(selectedCard.pollEndTime)}
+                        pollId={selectedCard.pollId}
                     />
                 )}
             </div>

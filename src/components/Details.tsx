@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Link } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import "../styles/details.css";
 
 interface DetailsProps {
@@ -9,10 +9,18 @@ interface DetailsProps {
     description: string;
     startDate: string;
     endDate: string;
+    pollId: string; // Додано поле для ID голосування
 }
 
-const Details: FC<DetailsProps> = ({ isOpen, onClose, title, description, startDate, endDate }) => {
+const Details: FC<DetailsProps> = ({ isOpen, onClose, title, description, startDate, endDate, pollId }) => {
+    const navigate = useNavigate(); // Ініціалізуємо хук useNavigate
+
     if (!isOpen) return null;
+
+    // Функція для навігації на сторінку голосування
+    const goToVoting = () => {
+        navigate(`/Voting/${pollId}`);
+    };
 
     return (
         <div className="details">
@@ -33,9 +41,9 @@ const Details: FC<DetailsProps> = ({ isOpen, onClose, title, description, startD
                         </div>
                     </div>
                     <p className="details__description">{description}</p>
-                    <Link className="details__action-button" to="../App.tsx">
+                    <button className="details__action-button" onClick={goToVoting}>
                         Go to Voting
-                    </Link>
+                    </button>
                 </div>
             </div>
         </div>

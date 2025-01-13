@@ -15,6 +15,63 @@ class Account extends Component<{}, AccountState> {
         buttonState: "initial",
     };
 
+    // Перевірка статусу підтвердження аккаунта
+    checkAccountVerification = async () => {
+        const authToken = localStorage.getItem("authToken"); // Отримуємо токен з локального сховища
+        if (!authToken) {
+            console.error("No authToken found in localStorage.");
+            return;
+        }
+
+        try {
+            const response = await fetch("http://localhost:80/profile/getUser", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${authToken}`, // Передаємо токен у заголовку
+                },
+            });
+
+            const data = await response.json();
+            if (data.success && data.DIDverified) {
+                this.setState({ buttonState: "success" }); // Якщо підтверджено, змінюємо статус кнопки на "success"
+            } else {
+                console.log("Account not verified or failed response.");
+            }
+        } catch (error) {
+            console.error("Error checking account verification:", error);
+        }
+    };
+
+    // Запит для підтвердження аккаунта
+    confirmAccount = async () => {
+        const authToken = localStorage.getItem("authToken"); // Отримуємо токен з локального сховища
+        if (!authToken) {
+            console.error("No authToken found in localStorage.");
+            return;
+        }
+
+        try {
+            const response = await fetch("http://localhost:80/profile/getConfirm", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${authToken}`, // Передаємо токен у заголовку
+                },
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                setTimeout(() => {
+                    this.checkAccountVerification(); // Перевірка статусу після затримки
+                   
+                }, 2000); // Затримка в 2 секунди
+            } else {
+                alert(data.message); // Виводимо повідомлення, якщо користувач вже підтверджений або сталася помилка
+            }
+        } catch (error) {
+            console.error("Error confirming account:", error);
+        }
+    };
+
     setActiveTab = (tabName: string) => {
         this.setState({ activeTab: tabName });
     };
@@ -26,12 +83,13 @@ class Account extends Component<{}, AccountState> {
 
         this.setState({ buttonState: "waiting" });
 
-        setTimeout(() => {
-            alert("Identity confirmed!");
-
-            this.setState({ buttonState: "success" });
-        }, 1000);
+        // Якщо статус аккаунта не підтверджено, викликаємо confirmAccount
+        this.confirmAccount();
     };
+
+    componentDidMount() {
+        this.checkAccountVerification(); // Перевіряємо статус при завантаженні сторінки
+    }
 
     render() {
         const { activeTab, buttonState } = this.state;
@@ -45,8 +103,8 @@ class Account extends Component<{}, AccountState> {
                                 buttonState === "waiting"
                                     ? "waiting"
                                     : buttonState === "success"
-                                        ? "success"
-                                        : ""
+                                    ? "success"
+                                    : ""
                             }`}
                             onClick={this.handleButtonClick}
                             disabled={buttonState !== "initial"}
@@ -54,8 +112,8 @@ class Account extends Component<{}, AccountState> {
                             {buttonState === "initial"
                                 ? "Confirm identity"
                                 : buttonState === "waiting"
-                                    ? "Waiting..."
-                                    : "Confirmed"}
+                                ? "Waiting..."
+                                : "Confirmed"}
                         </button>
                         <div className="account__icon-wrapper">
                             <svg

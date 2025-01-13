@@ -3,11 +3,10 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import stringSimilarity from 'string-similarity';
 import Card from './Card';
 import '../styles/vote.css';
-import userImage from '../assets/images/user__img.svg';
 import search from '../assets/images/searh.png';
 
 interface CardData {
-    id: number;
+    id: string;
     title: string;
     description: string;
     imageUrl: string;
@@ -25,82 +24,36 @@ class Vote extends Component<{}, State> {
         filteredData: [],
     };
 
-    mockData: CardData[] = [
-        {
-            id: 1,
-            title: 'Green Future Initiative',
-            description:
-                'Support the initiative to introduce green technologies into city infrastructure. The project involves the installation of solar panels, charging stations for electric vehicles, and reduction of CO₂ emissions.',
-            imageUrl: userImage,
-            isClosed: false,
-        },
-        {
-            id: 2,
-            title: 'Clean Water Project',
-            description:
-                'Join us in providing clean water to underprivileged communities by installing sustainable water filtration systems.',
-            imageUrl: userImage,
-            isClosed: true,
-        },
-        {
-            id: 3,
-            title: 'Urban Forest Development',
-            description:
-                'Help us create urban forests to improve air quality, reduce urban heat, and enhance biodiversity in cities.',
-            imageUrl: userImage,
-            isClosed: false,
-        },
-        {
-            id: 4,
-            title: 'Sustainable Agriculture',
-            description:
-                'Promote sustainable farming practices to enhance soil fertility, reduce waste, and improve crop yields.',
-            imageUrl: userImage,
-            isClosed: true,
-        },
-        {
-            id: 5,
-            title: 'Sustainable Agriculture',
-            description:
-                'Promote sustainable farming practices to enhance soil fertility, reduce waste, and improve crop yields.',
-            imageUrl: userImage,
-            isClosed: true,
-        },
-        {
-            id: 6,
-            title: 'Sustainable Agriculture',
-            description:
-                'Promote sustainable farming practices to enhance soil fertility, reduce waste, and improve crop yields.',
-            imageUrl: userImage,
-            isClosed: true,
-        },
-        {
-            id: 7,
-            title: 'Urban Forest Development',
-            description:
-                'Help us create urban forests to improve air quality, reduce urban heat, and enhance biodiversity in cities.',
-            imageUrl: userImage,
-            isClosed: false,
-        },
-        {
-            id: 8,
-            title: 'Urban Forest Development',
-            description:
-                'Help us create urban forests to improve air quality, reduce urban heat, and enhance biodiversity in cities.',
-            imageUrl: userImage,
-            isClosed: false,
-        },
-    ];
-
     componentDidMount() {
-        this.setState({ filteredData: this.mockData });
+        // Отримуємо дані з API
+        this.fetchData();
     }
 
-    handleVote = (id: number) => {
+    fetchData = async () => {
+        try {
+            const response = await fetch('http://localhost:80/votes/all'); 
+            const data = await response.json();
+
+            // Оновлюємо стан з отриманими даними
+            const formattedData = data.polls.map((vote: any) => ({
+                id: vote._id,
+                title: vote.title,
+                description: vote.description,
+                imageUrl: vote.imageUrl, // Додаємо зображення, якщо воно є в API
+                isClosed: vote.isClosed,
+            }));
+
+            this.setState({ filteredData: formattedData });
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    handleVote = (id: string) => {
         console.log(`Voted for card with ID: ${id}`);
     };
 
-    handleDetails = (id: number) => {
+    handleDetails = (id: string) => {
         console.log(`Details for card with ID: ${id}`);
     };
 
@@ -113,18 +66,18 @@ class Vote extends Component<{}, State> {
         const { query } = this.state;
 
         if (!query.trim()) {
-            this.setState({ filteredData: this.mockData });
+            this.fetchData(); // Якщо нічого не введено, повторно отримуємо всі дані
             return;
         }
 
-        const titles = this.mockData.map((item) => item.title);
+        const titles = this.state.filteredData.map((item) => item.title);
         const matches = stringSimilarity.findBestMatch(query, titles);
 
         const similarTitles = matches.ratings
             .filter((rating) => rating.rating > 0.4)
             .map((rating) => rating.target);
 
-        const filteredData = this.mockData.filter((item) =>
+        const filteredData = this.state.filteredData.filter((item) =>
             similarTitles.includes(item.title)
         );
 
@@ -166,11 +119,11 @@ class Vote extends Component<{}, State> {
                                         classNames="fade"
                                     >
                                         <Card
-                                            id={item.id}
+                                            id={item.id} 
                                             title={item.title}
                                             description={item.description}
-                                            imageUrl={item.imageUrl}
-                                            isClosed={item.isClosed} // Передаємо статус
+                                            imageUrl={item.imageUrl} // Передаємо зображення з API
+                                            isClosed={item.isClosed}
                                             onVote={() => this.handleVote(item.id)}
                                             onDetails={() => this.handleDetails(item.id)}
                                         />

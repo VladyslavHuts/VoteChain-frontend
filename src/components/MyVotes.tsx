@@ -1,7 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import card__img from "../assets/images/card__img-user.svg";
 import { useNavigate } from "react-router-dom";
 import Details from "./Details";
+
+export interface Vote {
+    pollId: string;
+    pollTitle: string;
+    pollDescription: string;
+    pollImageUrl: string;
+    pollEndTime: string;
+    pollIsClosed: boolean;
+    chosenOptionId: string; // ID вибраної опції для голосування
+    createdAt: string; // Додано поле для стартової дати
+}
 
 export interface CardProps {
     id: string;
@@ -11,6 +22,18 @@ export interface CardProps {
     isClosed: boolean;
     onDetails: () => void;
 }
+
+const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+
+    return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+};
 
 export const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, isClosed, onDetails }) => {
     const navigate = useNavigate();
@@ -48,48 +71,60 @@ export const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, is
 };
 
 const MyVotes: React.FC = () => {
+    const [votes, setVotes] = useState<Vote[]>([]);
     const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
     const [isDetailsOpen, setDetailsOpen] = useState(false);
 
-    const cards = [
-        {
-            id: "1",
-            title: "Green Future Initiative",
-            description: "This is a description of the Green Future Initiative.",
-            imageUrl: card__img,
-            isClosed: false,
-        },
-        {
-            id: "2",
-            title: "Clean Energy Project",
-            description: "This is a description of the Clean Energy Project.",
-            imageUrl: card__img,
-            isClosed: false,
-        },
-        {
-            id: "3",
-            title: "My Votes Card 3",
-            description: "This is a description of the My Votes Card 3.",
-            imageUrl: card__img,
-            isClosed: true,
-        },
-    ];
+    // Функція для отримання голосувань користувача з API
+    const fetchVotes = async () => {
+        const authToken = localStorage.getItem("authToken"); // Отримуємо токен з локального сховища
+        if (!authToken) {
+            console.error("No authToken found in localStorage.");
+            return;
+        }
+
+        try {
+            const response = await fetch("http://localhost:80/Account/MyVotes", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${authToken}`, // Передаємо токен у заголовку
+                },
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                setVotes(data.data); // Оновлюємо стейт голосуваннями
+            } else {
+                console.error("Failed to fetch votes:", data.message);
+            }
+        } catch (error) {
+            console.error("Error fetching votes:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchVotes(); // Викликаємо fetchVotes при завантаженні компонента
+    }, []);
 
     const handleDetails = (id: string) => {
         setSelectedCardId(id);
         setDetailsOpen(true);
     };
 
-    const selectedCard = cards.find((card) => card.id === selectedCardId);
+    const selectedCard = votes.find((vote) => vote.pollId === selectedCardId);
 
     return (
         <div>
             <div className="account__cards">
-                {cards.map((card) => (
+                {votes.map((vote) => (
                     <Card
-                        key={card.id}
-                        {...card}
-                        onDetails={() => handleDetails(card.id)}
+                        key={vote.pollId}
+                        id={vote.pollId}
+                        title={vote.pollTitle}
+                        description={vote.pollDescription}
+                        imageUrl={vote.pollImageUrl || card__img} // Встановлюємо картинку за замовчуванням
+                        isClosed={new Date(vote.pollEndTime) < new Date()} // Перевірка на закриття голосування
+                        onDetails={() => handleDetails(vote.pollId)} // Викликаємо функцію для відкриття деталей
                     />
                 ))}
             </div>
@@ -98,10 +133,11 @@ const MyVotes: React.FC = () => {
                 <Details
                     isOpen={isDetailsOpen}
                     onClose={() => setDetailsOpen(false)}
-                    title={selectedCard.title}
-                    description={selectedCard.description}
-                    startDate="2025-01-01"
-                    endDate="2025-12-31"
+                    title={selectedCard.pollTitle}
+                    description={selectedCard.pollDescription}
+                    startDate={formatDate(selectedCard.createdAt)} // Використовуємо створену дату як стартову
+                    endDate={formatDate(selectedCard.pollEndTime)}
+                    pollId={selectedCard.pollId}
                 />
             )}
         </div>

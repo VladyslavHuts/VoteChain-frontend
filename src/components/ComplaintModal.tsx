@@ -3,7 +3,7 @@ import "../styles/complaintModal.css";
 
 interface ComplaintModalProps {
     onClose: () => void;
-    votingId: number;
+    votingId: string;
 }
 
 const ComplaintModal: React.FC<ComplaintModalProps> = ({ onClose, votingId }) => {
