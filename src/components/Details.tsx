@@ -12,6 +12,18 @@ interface DetailsProps {
     pollId: string; // Додано поле для ID голосування
 }
 
+const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+
+    return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+};
+
 const Details: FC<DetailsProps> = ({ isOpen, onClose, title, description, startDate, endDate, pollId }) => {
     const navigate = useNavigate(); // Ініціалізуємо хук useNavigate
 
@@ -33,10 +45,10 @@ const Details: FC<DetailsProps> = ({ isOpen, onClose, title, description, startD
                         <h1 className="details__title">{title}</h1>
                         <div className="details__dates">
                             <p className="details__date">
-                                <strong>Start Date:</strong> {startDate}
+                                <strong>Start Date:</strong> {formatDate(startDate)}
                             </p>
                             <p className="details__date">
-                                <strong>End Date:</strong> {endDate}
+                                <strong>End Date:</strong> {formatDate(endDate)}
                             </p>
                         </div>
                     </div>

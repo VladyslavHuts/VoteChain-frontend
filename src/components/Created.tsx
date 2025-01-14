@@ -97,7 +97,7 @@ class Created extends Component {
                         />
                     ))}
                     <div className="account__addCard">
-                        <Link className="account__link" to="">
+                        <Link className="account__link" to="/add-voting">
                             <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <circle cx="60" cy="60" r="58" fill="#111111" stroke="#E8E8E8" strokeWidth="4"/>
                                 <rect x="55.5" y="16" width="9" height="90" fill="#D9D9D9"/>

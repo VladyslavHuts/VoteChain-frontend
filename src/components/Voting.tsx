@@ -11,10 +11,11 @@ interface VotingState {
         endDate: string;
         imageUrl: string;
     } | null;
-    options: { name: string; details: string; votes: number }[];
+    options: { name: string; details: string; votes: number; id: string }[];
     selectedOption: string | null;
     hasVoted: boolean;
     hoveredIndex: number | null;
+    voteDetails: { optionId: string; optionTitle: string; optionDescription: string } | null;
 }
 
 interface VotingProps {
@@ -32,14 +33,51 @@ class Voting extends Component<VotingProps, VotingState> {
             selectedOption: null,
             hasVoted: false,
             hoveredIndex: null,
+            voteDetails: null,
         };
     }
 
     componentDidMount() {
         const { id } = this.props;
         this.fetchVotingData(id);
+        this.checkIfUserVoted(id);
     }
 
+    toggleOption = (index: number) => {
+        this.setState((prevState) => ({
+            expandedIndex: prevState.expandedIndex === index ? null : index,
+        }));
+    };
+
+    // Функція для перевірки, чи користувач вже проголосував
+    checkIfUserVoted = async (id: string) => {
+        const authToken = localStorage.getItem("authToken");
+        if (!authToken) {
+            console.error("No authToken found in localStorage.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:80/votes/${id}`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${authToken}`,
+                },
+            });
+            const data = await response.json();
+            if (data.success && data.vote) {
+                this.setState({
+                    hasVoted: true,
+                    voteDetails: data.vote,
+                    selectedOption: data.vote.optionId,
+                });
+            }
+        } catch (error) {
+            console.error("Error checking user vote:", error);
+        }
+    };
+
+    // Функція для отримання даних голосування
     fetchVotingData = (id: string) => {
         fetch(`http://localhost:80/votes/${id}/details`)
             .then((response) => response.json())
@@ -47,7 +85,9 @@ class Voting extends Component<VotingProps, VotingState> {
                 const voting = data;
                 const formattedOptions = voting.options.map((option: any) => ({
                     name: option.optionText,
+                    details: option.description,
                     votes: option.voteCount,
+                    id: option.optionId,
                 }));
 
                 this.setState({
@@ -67,27 +107,54 @@ class Voting extends Component<VotingProps, VotingState> {
             });
     };
 
-    toggleOption = (index: number) => {
-        this.setState((prevState) => ({
-            expandedIndex: prevState.expandedIndex === index ? null : index,
-        }));
+    // Функція для вибору варіанту
+    handleOptionChange = (optionId: string) => {
+        this.setState({ selectedOption: optionId });
     };
 
-    handleOptionChange = (optionName: string) => {
-        this.setState({ selectedOption: optionName });
-    };
-
-    handleVote = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault(); // Зупиняємо стандартну поведінку форми
+    // Функція для відправки голосу на сервер
+    handleVote = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
         const { selectedOption } = this.state;
+        const { id } = this.props;
+
         if (selectedOption) {
-            alert(`You voted for: ${selectedOption}`);
-            this.setState({ hasVoted: true });
+            const authToken = localStorage.getItem("authToken");
+            if (!authToken) {
+                console.error("No authToken found in localStorage.");
+                return;
+            }
+
+            try {
+                const option = this.state.options.find((opt) => opt.id === selectedOption);
+                if (!option) return;
+
+                const response = await fetch(`http://localhost:80/votes/${id}/vote/${selectedOption}`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${authToken}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        optionId: selectedOption,
+                    }),
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    this.setState({ hasVoted: true, voteDetails: { optionId: option.id, optionTitle: option.name, optionDescription: option.details } });
+                    window.location.reload();
+                } else {
+                    window.location.reload();
+                }
+            } catch (error) {
+                console.error("Error submitting vote:", error);
+            }
         }
     };
 
     render() {
-        const { expandedIndex, votingData, options, selectedOption, hasVoted, hoveredIndex } = this.state;
+        const { expandedIndex, votingData, options, selectedOption, hasVoted, hoveredIndex, voteDetails } = this.state;
 
         if (!votingData) {
             return <p>Loading voting data...</p>;
@@ -102,6 +169,7 @@ class Voting extends Component<VotingProps, VotingState> {
                 <div className="voting__container">
                     <div className="voting__window">
                         <p className="voting__title">{votingData.title}</p>
+                        <p className="voting__description">{votingData.description}</p>
                         <div className="voting__dates">
                             <p className="voting__date">
                                 Start Date: <span id="start__date">{votingData.startDate}</span>
@@ -129,7 +197,7 @@ class Voting extends Component<VotingProps, VotingState> {
                                                 <div className="voting__bar-background">
                                                     <div
                                                         className={`voting__bar ${
-                                                            hasVoted && selectedOption === option.name
+                                                            hasVoted && selectedOption === option.id
                                                                 ? "voting__bar-selected"
                                                                 : ""
                                                         }`}
@@ -155,7 +223,7 @@ class Voting extends Component<VotingProps, VotingState> {
                                         <li
                                             key={index}
                                             className={`voting__option ${
-                                                selectedOption === option.name && hasVoted ? "selected" : ""
+                                                selectedOption === option.id && hasVoted ? "selected" : ""
                                             } ${expandedIndex === index ? "expanded" : ""}`}
                                         >
                                             <div className="voting__header">
@@ -177,9 +245,9 @@ class Voting extends Component<VotingProps, VotingState> {
                                                     <input
                                                         type="radio"
                                                         name="vote"
-                                                        value={option.name}
+                                                        value={option.id}
                                                         className="voting__radiobutton"
-                                                        onChange={() => this.handleOptionChange(option.name)}
+                                                        onChange={() => this.handleOptionChange(option.id)}
                                                         required
                                                     />
                                                 )}
