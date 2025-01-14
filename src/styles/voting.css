@@ -237,3 +237,17 @@
 .voting__bar-selected {
     background: linear-gradient(90deg, rgba(173, 0, 255, 1) 0%, rgba(255, 105, 255, 1) 100%);
 }
+.voting__bar-winner {
+    background: #be9050;
+  background: linear-gradient(
+    to right,
+    #cc9e5e,#f0ba5e
+  );
+}
+.voting__option.winner {
+    background: #554023;
+  background: linear-gradient(
+    to right,
+    #b18b57,#e7b051
+  );
+}

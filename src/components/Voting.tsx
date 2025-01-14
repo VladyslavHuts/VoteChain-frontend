@@ -16,6 +16,7 @@ interface VotingState {
     hasVoted: boolean;
     hoveredIndex: number | null;
     voteDetails: { optionId: string; optionTitle: string; optionDescription: string } | null;
+    winnerId: string | null;
 }
 
 interface VotingProps {
@@ -34,6 +35,7 @@ class Voting extends Component<VotingProps, VotingState> {
             hasVoted: false,
             hoveredIndex: null,
             voteDetails: null,
+            winnerId: null,
         };
     }
 
@@ -99,6 +101,7 @@ class Voting extends Component<VotingProps, VotingState> {
                         imageUrl: voting.imageUrl,
                     },
                     options: formattedOptions,
+                    winnerId: voting.winner || null,
                 });
             })
             .catch((error) => {
@@ -154,16 +157,16 @@ class Voting extends Component<VotingProps, VotingState> {
     };
 
     render() {
-        const { expandedIndex, votingData, options, selectedOption, hasVoted, hoveredIndex, voteDetails } = this.state;
-
+        const { expandedIndex, votingData, options, selectedOption, hasVoted, hoveredIndex, winnerId } = this.state;
+    
         if (!votingData) {
             return <p>Loading voting data...</p>;
         }
-
+    
         const sortedOptions = [...options].sort((a, b) => b.votes - a.votes);
-        const maxVotes = Math.max(...sortedOptions.map(option => option.votes));
+        const maxVotes = Math.max(...sortedOptions.map((option) => option.votes));
         const totalVotes = sortedOptions.reduce((sum, option) => sum + option.votes, 0);
-
+    
         return (
             <div className="container">
                 <div className="voting__container">
@@ -178,14 +181,14 @@ class Voting extends Component<VotingProps, VotingState> {
                                 End Date: <span id="end__date">{votingData.endDate}</span>
                             </p>
                         </div>
-
+    
                         <form className="voting__form" onSubmit={this.handleVote}>
                             <div className="voting__content">
                                 <div className="voting__graph">
                                     {sortedOptions.map((option, index) => {
                                         const scaledWidth = ((option.votes / maxVotes) * 95).toFixed(0);
                                         const actualPercentage = ((option.votes / totalVotes) * 100).toFixed(0);
-
+    
                                         return (
                                             <div
                                                 key={index}
@@ -197,19 +200,21 @@ class Voting extends Component<VotingProps, VotingState> {
                                                 <div className="voting__bar-background">
                                                     <div
                                                         className={`voting__bar ${
-                                                            hasVoted && selectedOption === option.id
-                                                                ? "voting__bar-selected"
-                                                                : ""
+                                                            winnerId === option.id
+                                                                ? 'voting__bar-winner'
+                                                                : hasVoted && selectedOption === option.id
+                                                                ? 'voting__bar-selected'
+                                                                : ''
                                                         }`}
                                                         style={{
-                                                            "--target-width": `${scaledWidth}%`,
+                                                            '--target-width': `${scaledWidth}%`,
                                                         } as React.CSSProperties}
                                                     ></div>
                                                 </div>
                                                 <div className="voting__bar-percentage-container">
                                                     <div className="voting__bar-percentage">{actualPercentage}%</div>
                                                 </div>
-
+    
                                                 {hoveredIndex === index && (
                                                     <div className="voting__tooltip">{option.name}</div>
                                                 )}
@@ -217,27 +222,37 @@ class Voting extends Component<VotingProps, VotingState> {
                                         );
                                     })}
                                 </div>
-
+    
                                 <ul className="voting__options">
                                     {sortedOptions.map((option, index) => (
                                         <li
                                             key={index}
                                             className={`voting__option ${
-                                                selectedOption === option.id && hasVoted ? "selected" : ""
-                                            } ${expandedIndex === index ? "expanded" : ""}`}
+                                                winnerId === option.id
+                                                    ? 'winner'
+                                                    : selectedOption === option.id && hasVoted
+                                                    ? 'selected'
+                                                    : ''
+                                            } ${expandedIndex === index ? 'expanded' : ''}`}
                                         >
                                             <div className="voting__header">
                                                 <div
                                                     className={`voting__icon-wrapper ${
-                                                        expandedIndex === index ? "rotated" : ""
+                                                        expandedIndex === index ? 'rotated' : ''
                                                     }`}
                                                     onClick={() => this.toggleOption(index)}
                                                 >
-                                                    <svg width="20" height="14" viewBox="0 0 20 14" fill="none"
-                                                         xmlns="http://www.w3.org/2000/svg">
+                                                    <svg
+                                                        width="20"
+                                                        height="14"
+                                                        viewBox="0 0 20 14"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
                                                         <path
                                                             d="M3.75 0L0 3.81818L10 14L20 3.81818L16.25 0L10 6.36364L3.75 0Z"
-                                                            fill="#E8E8E8" />
+                                                            fill="#E8E8E8"
+                                                        />
                                                     </svg>
                                                 </div>
                                                 <span>{option.name}</span>
@@ -254,7 +269,7 @@ class Voting extends Component<VotingProps, VotingState> {
                                             </div>
                                             <div
                                                 className={`voting__details ${
-                                                    expandedIndex === index ? "expanded" : ""
+                                                    expandedIndex === index ? 'expanded' : ''
                                                 }`}
                                             >
                                                 {option.details}
@@ -264,10 +279,7 @@ class Voting extends Component<VotingProps, VotingState> {
                                 </ul>
                             </div>
                             {!hasVoted && (
-                                <button
-                                    className="voting__btn"
-                                    type="submit"
-                                >
+                                <button className="voting__btn" type="submit">
                                     Vote
                                 </button>
                             )}
@@ -277,6 +289,7 @@ class Voting extends Component<VotingProps, VotingState> {
             </div>
         );
     }
+    
 }
 
 const VotingWithParams: React.FC = () => {

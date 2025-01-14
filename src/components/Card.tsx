@@ -14,6 +14,7 @@ interface Vote {
     imageUrl: string; // Це поле потрібно для відображення картинки (якщо в API є така інформація)
     isClosed: boolean;
     endTime: string; // Тут використовуємо `endTime` з API
+    createdAt: string;
 }
 
 interface VoteDataResponse {
@@ -128,7 +129,7 @@ const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, isClosed,
                     onClose={closeDetailsModal}
                     title={title}
                     description={description}
-                    startDate={voteData.endTime || "01/15/2024"}
+                    startDate={voteData.createdAt || "01/15/2024"}
                     endDate={voteData.endTime || "02/20/2024"} 
                     pollId={id}
                 />

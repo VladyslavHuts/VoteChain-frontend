@@ -8,7 +8,7 @@ export interface Vote {
     pollTitle: string;
     pollDescription: string;
     pollImageUrl: string;
-    pollEndTime: string;
+    endTime: string;
     pollIsClosed: boolean;
     chosenOptionId: string; // ID вибраної опції для голосування
     createdAt: string; // Додано поле для стартової дати
@@ -23,17 +23,6 @@ export interface CardProps {
     onDetails: () => void;
 }
 
-const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    const seconds = String(date.getSeconds()).padStart(2, "0");
-
-    return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
-};
 
 export const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, isClosed, onDetails }) => {
     const navigate = useNavigate();
@@ -75,6 +64,7 @@ const MyVotes: React.FC = () => {
     const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
     const [isDetailsOpen, setDetailsOpen] = useState(false);
 
+
     // Функція для отримання голосувань користувача з API
     const fetchVotes = async () => {
         const authToken = localStorage.getItem("authToken"); // Отримуємо токен з локального сховища
@@ -100,8 +90,11 @@ const MyVotes: React.FC = () => {
         } catch (error) {
             console.error("Error fetching votes:", error);
         }
+
+        
     };
 
+    
     useEffect(() => {
         fetchVotes(); // Викликаємо fetchVotes при завантаженні компонента
     }, []);
@@ -117,13 +110,15 @@ const MyVotes: React.FC = () => {
         <div>
             <div className="account__cards">
                 {votes.map((vote) => (
+                    
                     <Card
+                    
                         key={vote.pollId}
                         id={vote.pollId}
                         title={vote.pollTitle}
                         description={vote.pollDescription}
                         imageUrl={vote.pollImageUrl || card__img} // Встановлюємо картинку за замовчуванням
-                        isClosed={new Date(vote.pollEndTime) < new Date()} // Перевірка на закриття голосування
+                        isClosed={new Date(vote.endTime) < new Date()} // Перевірка на закриття голосування
                         onDetails={() => handleDetails(vote.pollId)} // Викликаємо функцію для відкриття деталей
                     />
                 ))}
@@ -135,8 +130,8 @@ const MyVotes: React.FC = () => {
                     onClose={() => setDetailsOpen(false)}
                     title={selectedCard.pollTitle}
                     description={selectedCard.pollDescription}
-                    startDate={formatDate(selectedCard.createdAt)} // Використовуємо створену дату як стартову
-                    endDate={formatDate(selectedCard.pollEndTime)}
+                    startDate={selectedCard.createdAt} // Використовуємо створену дату як стартову
+                    endDate={selectedCard.endTime}
                     pollId={selectedCard.pollId}
                 />
             )}
