@@ -15,6 +15,7 @@
     border: solid 3px rgba(160, 160, 160, 0.5);
 }
 .voting__title {
+    width: 1000px;
     margin-top: 20px;
     margin-left: 30px;
     align-self: flex-start;
@@ -236,4 +237,30 @@
 }
 .voting__bar-selected {
     background: linear-gradient(90deg, rgba(173, 0, 255, 1) 0%, rgba(255, 105, 255, 1) 100%);
+}
+.voting__address {
+    padding-left: 30px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    width: 100%;
+    position: relative;
+}
+
+.copy-button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    background-color: #FF00B7;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    outline: none;
+    transition: background-color 0.3s ease;
+}
+
+.copy-button:hover {
+    background-color: #45a049; /* Трохи темніше при наведенні */
 }

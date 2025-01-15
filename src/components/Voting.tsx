@@ -42,7 +42,7 @@ class Voting extends Component<VotingProps, VotingState> {
         const mockData = [
             {
                 id: "1",
-                title: "Green Future Initiative",
+                title: "Green Future Initiative Green future initiative Green future initiative Green future initiative",
                 startDate: "01.15.2024",
                 endDate: "02.20.2024",
                 options: [
@@ -55,6 +55,25 @@ class Voting extends Component<VotingProps, VotingState> {
                 ],
             },
         ];
+
+        document.getElementById('copy-button')?.addEventListener('click', () => {
+            // Отримуємо елемент з ID 'address'
+            const addressElement = document.getElementById('address') as HTMLElement;
+
+            if (addressElement) {
+                const textToCopy = addressElement.textContent || ''; // Текст для копіювання
+
+                // Копіюємо текст у буфер обміну
+                navigator.clipboard.writeText(textToCopy)
+                    .then(() => {
+                        alert('Copied to clipboard!'); // Успішне копіювання
+                    })
+                    .catch((err) => {
+                        console.error('Failed to copy text: ', err);
+                    });
+            }
+        });
+
 
         const voting = mockData.find((item) => item.id === id);
 
@@ -107,6 +126,12 @@ class Voting extends Component<VotingProps, VotingState> {
                 <div className="voting__container">
                     <div className="voting__window">
                         <p className="voting__title">{votingData.title}</p>
+                        <p className="voting__address">
+                            Address:
+                            <span
+                                id="address"> gfsudyygfsdyg4754yc87tcb4t4676tbr6v4t64b67676vb4b4v66b4vrt7647tbv</span>
+                            <button id="copy-button" className="copy-button">Copy</button>
+                        </p>
                         <div className="voting__dates">
                             <p className="voting__date">
                                 Start Date: <span id="start__date">{votingData.startDate}</span>
@@ -127,8 +152,8 @@ class Voting extends Component<VotingProps, VotingState> {
                                             <div
                                                 key={index}
                                                 className="voting__bar-container"
-                                                onMouseEnter={() => this.setState({ hoveredIndex: index })}
-                                                onMouseLeave={() => this.setState({ hoveredIndex: null })}
+                                                onMouseEnter={() => this.setState({hoveredIndex: index})}
+                                                onMouseLeave={() => this.setState({hoveredIndex: null})}
                                             >
                                                 <div className="voting__bar-label">{option.votes}</div>
                                                 <div className="voting__bar-background">
@@ -174,7 +199,7 @@ class Voting extends Component<VotingProps, VotingState> {
                                                          xmlns="http://www.w3.org/2000/svg">
                                                         <path
                                                             d="M3.75 0L0 3.81818L10 14L20 3.81818L16.25 0L10 6.36364L3.75 0Z"
-                                                            fill="#E8E8E8" />
+                                                            fill="#E8E8E8"/>
                                                     </svg>
                                                 </div>
                                                 <span>{option.name}</span>
@@ -217,14 +242,14 @@ class Voting extends Component<VotingProps, VotingState> {
 }
 
 const VotingWithParams: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
+    const {id} = useParams<{ id: string }>();
     const navigate = useNavigate();
 
     const handleNotFound = () => {
         navigate("/404");
     };
 
-    return <Voting id={id!} onNotFound={handleNotFound} />;
+    return <Voting id={id!} onNotFound={handleNotFound}/>;
 };
 
 export default VotingWithParams;

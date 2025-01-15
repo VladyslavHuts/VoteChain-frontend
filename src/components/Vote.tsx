@@ -28,9 +28,9 @@ class Vote extends Component<{}, State> {
     mockData: CardData[] = [
         {
             id: 1,
-            title: 'Green Future Initiative',
+            title: 'Green Future Initiative  Initiative Initiative',
             description:
-                'Support the initiative to introduce green technologies into city infrastructure. The project involves the installation of solar panels, charging stations for electric vehicles, and reduction of CO₂ emissions.',
+                'Support the initiative to introduce green technologies into city infrastructure. Support the initiative to introduce green technologies into city infrastructure. The project involves the iSupport the initiative to introduce green technologies into city infrastructure. The project involves the iThe project involves the installation of solar panels, charging stations for electric vehicles, and reduction of CO₂ emissions.',
             imageUrl: userImage,
             isClosed: false,
         },
