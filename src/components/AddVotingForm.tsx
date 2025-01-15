@@ -2,6 +2,10 @@ import React, { Component, ChangeEvent, FormEvent } from "react";
 import "../styles/addVotingForm.css";
 import { v4 as uuidv4 } from "uuid";
 import { ethers } from "ethers";
+import CONTRACT_ABI from "./contractABI.json"; // Replace with your ABI file path
+
+const CONTRACT_ADDRESS = "0xbd0c88804efb5428bbb5ea0df9852f1af647a33f";
+
 interface Option {
   optionText: string;
   description: string;
@@ -13,8 +17,7 @@ interface State {
   description: string;
   options: Option[];
   photo: File | null;
-  endTime: string; // Замінили startDate на endDate
-  contractAddress: string;
+  endTime: string;
 }
 
 class AddVotingForm extends Component<{}, State> {
@@ -25,7 +28,6 @@ class AddVotingForm extends Component<{}, State> {
     options: [{ optionText: "", description: "" }],
     photo: null,
     endTime: "",
-    contractAddress: ethers.Wallet.createRandom().address,
   };
 
   handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -61,8 +63,7 @@ class AddVotingForm extends Component<{}, State> {
     this.setState((prevState) => {
       const updatedOptions = prevState.options.filter((_, i) => i !== index);
       return {
-        options:
-          updatedOptions.length >= 1 ? updatedOptions : prevState.options,
+        options: updatedOptions.length >= 1 ? updatedOptions : prevState.options,
       };
     });
   };
@@ -75,7 +76,6 @@ class AddVotingForm extends Component<{}, State> {
       options: [{ optionText: "", description: "" }],
       photo: null,
       endTime: "",
-      contractAddress: ethers.Wallet.createRandom().address,
     });
   };
 
@@ -84,7 +84,7 @@ class AddVotingForm extends Component<{}, State> {
     this.setState({ [name]: value } as unknown as Pick<State, "endTime">);
 
     if (name === "endTime") {
-      const currentDateTime = new Date().toISOString().slice(0, 16); // Формат YYYY-MM-DDTHH:mm
+      const currentDateTime = new Date().toISOString().slice(0, 16);
       if (value < currentDateTime) {
         alert("End time must not be earlier than the current time.");
       }
@@ -94,10 +94,8 @@ class AddVotingForm extends Component<{}, State> {
   handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const { title, description, options, photo, endTime, contractAddress } =
-      this.state;
+    const { title, description, options, photo, endTime } = this.state;
 
-    // Перевірка на заповненість полів
     if (!title.trim() || !description.trim()) {
       alert("Title and description are required.");
       return;
@@ -120,50 +118,64 @@ class AddVotingForm extends Component<{}, State> {
       return;
     }
 
-    const photoToSend = photo ? photo : "https://cdn-icons-png.flaticon.com/512/8089/8089593.png"; 
-
-    const authToken = localStorage.getItem("authToken"); 
-    if (!authToken) {
-      console.error("No authToken found in localStorage.");
-      return;
-    }
-
-    // Формуємо дані для відправки
-    const payload = {
-      title,
-      description,
-      options: options.map((option) => ({
-        optionText: option.optionText,
-        description: option.description,
-      })),
-      endTime, // Замінили endDate на endTime
-      contractAddress,
-      imageUrl: photoToSend,
-    };
-
-    // Виводимо JSON об'єкт (тіло запиту) у консоль
-    console.log("Request payload:", JSON.stringify(payload, null, 2));
-
     try {
-      const response = await fetch("http://localhost:80/votes/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authToken}`, // Add token to Authorization header
-        },
-        body: JSON.stringify(payload), // Send data as JSON
-      });
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = await provider.getSigner();
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
-      const data = await response.json();
-      if (data.success) {
-        alert("Voting created successfully!");
-        this.resetForm();
+      const optionsTexts = options.map((opt) => opt.optionText);
+      const transaction = await contract.createVoting(
+        title,
+        description,
+        optionsTexts,
+        Math.floor(new Date(endTime).getTime() / 1000)
+      );
+
+      alert("Transaction sent! Please confirm it in MetaMask.");
+      const receipt = await transaction.wait();
+
+
+      if (receipt.status === 1) {
         
+        
+
+        const payload = {
+          title,
+          description,
+          options,
+          endTime,
+          contractAddress: receipt.hash,
+        };
+
+        const authToken = localStorage.getItem("authToken");
+
+        try {
+          const response = await fetch("http://localhost:80/votes/create", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify(payload),
+          });
+
+          const data = await response.json();
+          if (data.success) {
+            alert("Voting created successfully!");
+            this.resetForm();
+          } else {
+            alert(data.message);
+          }
+        } catch (error) {
+          console.error("Error creating voting in backend:", error);
+          alert("An error occurred while creating the voting in backend.");
+        }
       } else {
-        alert(data.message);
+        alert("Transaction failed.");
       }
     } catch (error) {
-      console.error("Error creating voting:", error);
+      console.error("Error interacting with the contract:", error);
       alert("An error occurred while creating the voting.");
     }
   };
@@ -173,10 +185,7 @@ class AddVotingForm extends Component<{}, State> {
       <div className="add-voting-form">
         <div className="container">
           <div className="add-voting-form__container">
-            <form
-              onSubmit={this.handleSubmit}
-              className="add-voting-form__form"
-            >
+            <form onSubmit={this.handleSubmit} className="add-voting-form__form">
               <div className="add-voting-form__section">
                 <h2 className="add-voting-form__title">Voting Information</h2>
                 <div className="add-voting-form__group">
@@ -194,10 +203,7 @@ class AddVotingForm extends Component<{}, State> {
                   />
                 </div>
                 <div className="add-voting-form__group">
-                  <label
-                    htmlFor="description"
-                    className="add-voting-form__label"
-                  >
+                  <label htmlFor="description" className="add-voting-form__label">
                     Description
                   </label>
                   <textarea
@@ -233,11 +239,11 @@ class AddVotingForm extends Component<{}, State> {
                     End Time
                   </label>
                   <input
-                    type="datetime-local" // Використовуємо type="datetime-local" для введення дати та часу
+                    type="datetime-local"
                     id="endTime"
                     name="endTime"
                     className="add-voting-form__input"
-                    value={this.state.endTime} // Перевірте, чи значення передається коректно
+                    value={this.state.endTime}
                     onChange={this.handleDateChange}
                     required
                   />
@@ -248,19 +254,13 @@ class AddVotingForm extends Component<{}, State> {
                 {this.state.options.map((option, index) => (
                   <div key={index} className="add-voting-form__option">
                     <div className="add-voting-form__group">
-                      <label className="add-voting-form__label">
-                        Option Title
-                      </label>
+                      <label className="add-voting-form__label">Option Title</label>
                       <input
                         type="text"
                         className="add-voting-form__input"
                         value={option.optionText}
                         onChange={(e) =>
-                          this.handleOptionChange(
-                            index,
-                            "optionText",
-                            e.target.value
-                          )
+                          this.handleOptionChange(index, "optionText", e.target.value)
                         }
                         required
                       />
@@ -273,11 +273,7 @@ class AddVotingForm extends Component<{}, State> {
                         className="add-voting-form__input"
                         value={option.description}
                         onChange={(e) =>
-                          this.handleOptionChange(
-                            index,
-                            "description",
-                            e.target.value
-                          )
+                          this.handleOptionChange(index, "description", e.target.value)
                         }
                         required
                       ></textarea>
