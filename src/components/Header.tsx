@@ -9,7 +9,7 @@ const Header: React.FC = () => {
 
     const handleButtonClick = () => {
         if (isLoggedIn) {
-            navigate('/account');
+            navigate('/account'); //Туп повинна бути локіка піключення
         } else {
             setIsLoggedIn(true);
         }
