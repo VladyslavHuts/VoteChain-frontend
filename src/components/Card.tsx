@@ -4,16 +4,15 @@ import Details from "../components/Details";
 import "../styles/card.css";
 import complaint from "../assets/images/complaint.png";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Імпортуємо useNavigate
+import { useNavigate } from "react-router-dom";
 
-// Інтерфейси для типізації
 interface Vote {
     _id: string;
     title: string;
     description: string;
-    imageUrl: string; // Це поле потрібно для відображення картинки (якщо в API є така інформація)
+    imageUrl: string;
     isClosed: boolean;
-    endTime: string; // Тут використовуємо `endTime` з API
+    endTime: string;
     createdAt: string;
 }
 
@@ -31,28 +30,23 @@ interface CardProps {
     onDetails?: () => void;
 }
 
-
 const API_URL = "http://localhost:80";
 
 const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, isClosed, onVote, onDetails }) => {
     const [hovered, setHovered] = useState(false);
     const [isComplaintModalOpen, setIsComplaintModalOpen] = useState(false);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-    const [voteData, setVoteData] = useState<Vote | null>(null); // Зберігаємо конкретні дані голосування
-    const navigate = useNavigate(); // Ініціалізуємо хук useNavigate
+    const [voteData, setVoteData] = useState<Vote | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        // Завантаження всіх голосувань без фільтрації
         const fetchVoteData = async () => {
             try {
                 const response = await axios.get<VoteDataResponse>(`${API_URL}/votes/all`);
-
-                // Знайти конкретне голосування за _id
                 const vote = response.data.polls.find((vote) => vote._id === id);
                 if (vote) {
                     setVoteData(vote);
                 }
-
             } catch (error) {
                 console.error("Error fetching vote data:", error);
             }
@@ -77,9 +71,26 @@ const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, isClosed,
         setIsDetailsModalOpen(false);
     };
 
-    // Функція для переадресації на сторінку голосування
-    const handleVote = () => {
-        navigate(`/Voting/${id}`);
+    const handleVote = async () => {
+        try {
+            const response = await fetch(`http://localhost:80/votes/${id}/details`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ pollId: id }),
+            });
+
+            if (response.ok) {
+                console.log('Vote details viewed');
+            } else {
+                console.error('Error in sending vote details');
+            }
+
+            navigate(`/Voting/${id}`);
+        } catch (error) {
+            console.error('Error sending POST request:', error);
+        }
     };
 
     return (
@@ -122,7 +133,6 @@ const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, isClosed,
             {isClosed && <p className="card__message">This voting has been closed.</p>}
 
             {isComplaintModalOpen && <ComplaintModal onClose={closeComplaintModal} votingId={id} />}
-
             {isDetailsModalOpen && voteData && (
                 <Details
                     isOpen={isDetailsModalOpen}
@@ -130,7 +140,7 @@ const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, isClosed,
                     title={title}
                     description={description}
                     startDate={voteData.createdAt || "01/15/2024"}
-                    endDate={voteData.endTime || "02/20/2024"} 
+                    endDate={voteData.endTime || "02/20/2024"}
                     pollId={id}
                 />
             )}

@@ -10,6 +10,7 @@ interface State {
     selectedInterval: string;
     selectedStatus: string;
     chartType: string;
+    graphData: Record<string, Record<string, number[]>> | null;
 }
 
 class Dashboard extends Component<{}, State> {
@@ -19,6 +20,7 @@ class Dashboard extends Component<{}, State> {
         selectedInterval: "7 days",
         selectedStatus: "ALL",
         chartType: "activeVotes",
+        graphData: null,
     };
 
     toggleDropdown = () => {
@@ -45,11 +47,24 @@ class Dashboard extends Component<{}, State> {
 
     componentDidMount() {
         document.addEventListener("click", this.closeDropdown);
+
+        // Fetch initial data from API
+        this.fetchGraphData();
     }
 
     componentWillUnmount() {
         document.removeEventListener("click", this.closeDropdown);
     }
+
+    fetchGraphData = async () => {
+        try {
+            const response = await fetch("http://localhost:80/votes/dashboard"); // Replace with your API endpoint
+            const data = await response.json();
+            this.setState({ graphData: data });
+        } catch (error) {
+            console.error("Error fetching graph data:", error);
+        }
+    };
 
     changeInterval = (interval: string) => {
         this.setState({ selectedInterval: interval });
@@ -89,29 +104,23 @@ class Dashboard extends Component<{}, State> {
     };
 
     getGraphData = () => {
-        const { selectedInterval, chartType } = this.state;
+        const { selectedInterval, chartType, graphData } = this.state;
 
-        const dataMap: Record<string, Record<string, number[]>> = {
-            "activeVotes": {
-                "7 days": [100, 150, 200, 75, 180, 150, 250],
-                "1 month": [500, 700, 600, 550],
-                "1 year": [450, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1100],
-            },
-            "newVotes": {
-                "7 days": [50, 100, 120, 60, 90, 80, 150],
-                "1 month": [300, 400, 350, 380],
-                "1 year": [250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800],
-            },
-        };
+        if (!graphData) {
+            return {
+                labels: [],
+                datasets: [],
+            };
+        }
 
+        const labels = this.getDatesForInterval(selectedInterval);
+        const data = graphData[chartType]?.[selectedInterval] || [];
         const colorsMap: Record<string, string[]> = {
             "activeVotes": ["#03c0c6", "#2600ff"],
             "newVotes": ["#FC42E9", "#C800FF"],
         };
 
-        const labels = this.getDatesForInterval(selectedInterval);
-        const data = dataMap[chartType][selectedInterval];
-        const [startColor, endColor] = colorsMap[chartType];
+        const [startColor, endColor] = colorsMap[chartType] || ["#000", "#000"];
 
         return {
             labels: labels,

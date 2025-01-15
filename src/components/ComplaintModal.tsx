@@ -9,7 +9,7 @@ interface ComplaintModalProps {
 const ComplaintModal: React.FC<ComplaintModalProps> = ({ onClose, votingId }) => {
     const [selectedComplaint, setSelectedComplaint] = useState<string | null>(null);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!selectedComplaint) {
@@ -17,12 +17,33 @@ const ComplaintModal: React.FC<ComplaintModalProps> = ({ onClose, votingId }) =>
             return;
         }
 
-        console.log(`Complaint submitted for voting ID: ${votingId}`);
-        console.log(`Complaint type: ${selectedComplaint}`);
+        const authToken = localStorage.getItem("authToken");
+        if (!authToken) {
+            console.error("No authToken found in localStorage.");
+            return;
+        }
 
-        alert("Your complaint has been submitted successfully!");
+        try {
+            const response = await fetch(`http://localhost:80/votes/${votingId}/complain`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
+                },
+                body: JSON.stringify({ complaintType: selectedComplaint }),
+            });
 
-        onClose();
+            if (response.ok) {
+                console.log('Complaint submitted successfully');
+                alert("Your complaint has been submitted successfully!");
+            } else {
+                console.error('Error submitting complaint');
+            }
+
+            onClose();
+        } catch (error) {
+            console.error("Error sending complaint request:", error);
+        }
     };
 
     return (

@@ -30,8 +30,28 @@ const Details: FC<DetailsProps> = ({ isOpen, onClose, title, description, startD
     if (!isOpen) return null;
 
     // Функція для навігації на сторінку голосування
-    const goToVoting = () => {
-        navigate(`/Voting/${pollId}`);
+    const goToVoting = async () => {
+        try {
+            // Відправляємо POST-запит
+            const response = await fetch(`http://localhost:80/votes/${pollId}/details`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ pollId }), // Додаємо pollId у запит
+            });
+
+            if (response.ok) {
+                console.log('Vote details viewed');
+            } else {
+                console.error('Error in sending vote details');
+            }
+
+            // Навігація на сторінку голосування
+            navigate(`/Voting/${pollId}`);
+        } catch (error) {
+            console.error('Error sending POST request:', error);
+        }
     };
 
     return (
