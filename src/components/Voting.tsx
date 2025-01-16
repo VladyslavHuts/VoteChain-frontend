@@ -1,6 +1,10 @@
 import React, { Component } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../styles/voting.css";
+import { ethers } from "ethers";
+import CONTRACT_ABI from "./contractABI.json"; // Replace with your ABI file path
+
+const CONTRACT_ADDRESS = "0xb67b620f52fa7a39e6310b6fd426ce3bb128c2e2";
 
 interface VotingState {
     expandedIndex: number | null;
@@ -120,53 +124,83 @@ class Voting extends Component<VotingProps, VotingState> {
         event.preventDefault();
         const { selectedOption } = this.state;
         const { id } = this.props;
-
-        if (selectedOption) {
+    
+        if (!selectedOption) {
+            alert("Please select an option before voting.");
+            return;
+        }
+    
+        try {
+            // Підключення до MetaMask
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            await provider.send("eth_requestAccounts", []);
+            const signer = await provider.getSigner();
+            const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+    
+            // Відправка транзакції до смартконтракту
+            const transaction = await contract.vote(id, selectedOption);
+    
+            alert("Transaction sent! Please confirm it in MetaMask.");
+            const receipt = await transaction.wait(); // Очікуємо підтвердження транзакції
+    
+            const transactionHash = receipt.hash;
+           
+    
+            // Після успішної транзакції відправляємо дані на бекенд
             const authToken = localStorage.getItem("authToken");
             if (!authToken) {
                 console.error("No authToken found in localStorage.");
                 return;
             }
-
-            try {
-                const option = this.state.options.find((opt) => opt.id === selectedOption);
-                if (!option) return;
-
-                const response = await fetch(`http://localhost:80/votes/${id}/vote/${selectedOption}`, {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${authToken}`,
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        optionId: selectedOption,
-                    }),
-                });
-
-                const data = await response.json();
-                if (data.success) {
-                    this.setState({ hasVoted: true, voteDetails: { optionId: option.id, optionTitle: option.name, optionDescription: option.details } });
-                    window.location.reload();
-                } else {
-                    window.location.reload();
-                }
-            } catch (error) {
-                console.error("Error submitting vote:", error);
+    
+            const response = await fetch(`http://localhost:80/votes/${id}/vote/${selectedOption}`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${authToken}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    transactionAddress: transactionHash,
+                }),
+            });
+    
+            if (!response.ok) {
+                console.error("Server error:", response.status, response.statusText);
+                alert("An error occurred while submitting your vote. Please try again.");
+                return;
             }
+    
+            const data = await response.json();
+            
+    
+            // Перевірка наявності повідомлення про успіх
+            if (data.message === "Vote recorded successfully") {
+                this.setState({ hasVoted: true });
+                
+                window.location.reload(); // Перезавантаження сторінки
+            } else {
+                console.error("Unexpected server response:", data);
+                alert("An unexpected error occurred.");
+            }
+        } catch (error) {
+            console.error("Error voting:", error);
+            alert("An error occurred during the voting process.");
         }
     };
+    
+    
 
     render() {
         const { expandedIndex, votingData, options, selectedOption, hasVoted, hoveredIndex, winnerId } = this.state;
-    
+
         if (!votingData) {
             return <p>Loading voting data...</p>;
         }
-    
+
         const sortedOptions = [...options].sort((a, b) => b.votes - a.votes);
         const maxVotes = Math.max(...sortedOptions.map((option) => option.votes));
         const totalVotes = sortedOptions.reduce((sum, option) => sum + option.votes, 0);
-    
+
         return (
             <div className="container">
                 <div className="voting__container">
@@ -181,14 +215,14 @@ class Voting extends Component<VotingProps, VotingState> {
                                 End Date: <span id="end__date">{votingData.endDate}</span>
                             </p>
                         </div>
-    
+
                         <form className="voting__form" onSubmit={this.handleVote}>
                             <div className="voting__content">
                                 <div className="voting__graph">
                                     {sortedOptions.map((option, index) => {
                                         const scaledWidth = ((option.votes / maxVotes) * 95).toFixed(0);
                                         const actualPercentage = ((option.votes / totalVotes) * 100).toFixed(0);
-    
+
                                         return (
                                             <div
                                                 key={index}
@@ -214,7 +248,7 @@ class Voting extends Component<VotingProps, VotingState> {
                                                 <div className="voting__bar-percentage-container">
                                                     <div className="voting__bar-percentage">{actualPercentage}%</div>
                                                 </div>
-    
+
                                                 {hoveredIndex === index && (
                                                     <div className="voting__tooltip">{option.name}</div>
                                                 )}
@@ -222,7 +256,7 @@ class Voting extends Component<VotingProps, VotingState> {
                                         );
                                     })}
                                 </div>
-    
+
                                 <ul className="voting__options">
                                     {sortedOptions.map((option, index) => (
                                         <li
@@ -289,7 +323,6 @@ class Voting extends Component<VotingProps, VotingState> {
             </div>
         );
     }
-    
 }
 
 const VotingWithParams: React.FC = () => {

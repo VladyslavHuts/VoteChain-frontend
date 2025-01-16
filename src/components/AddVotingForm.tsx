@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { ethers } from "ethers";
 import CONTRACT_ABI from "./contractABI.json"; // Replace with your ABI file path
 
-const CONTRACT_ADDRESS = "0xbd0c88804efb5428bbb5ea0df9852f1af647a33f";
+const CONTRACT_ADDRESS = "0xb67b620f52fa7a39e6310b6fd426ce3bb128c2e2";
 
 interface Option {
   optionText: string;

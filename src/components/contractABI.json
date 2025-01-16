@@ -30,9 +30,14 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "_votingId",
-				"type": "uint256"
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_optionId",
+				"type": "string"
 			}
 		],
 		"name": "vote",
@@ -45,15 +50,21 @@
 		"inputs": [
 			{
 				"indexed": true,
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "votingId",
-				"type": "uint256"
+				"type": "string"
 			},
 			{
 				"indexed": true,
 				"internalType": "address",
 				"name": "voter",
 				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "optionId",
+				"type": "string"
 			}
 		],
 		"name": "VoteSubmitted",
@@ -64,9 +75,9 @@
 		"inputs": [
 			{
 				"indexed": true,
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "votingId",
-				"type": "uint256"
+				"type": "string"
 			},
 			{
 				"indexed": false,
@@ -87,9 +98,9 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "_votingId",
-				"type": "uint256"
+				"type": "string"
 			},
 			{
 				"internalType": "address",
@@ -111,9 +122,14 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "_votingId",
-				"type": "uint256"
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_optionId",
+				"type": "string"
 			}
 		],
 		"name": "getTotalVotes",
@@ -130,9 +146,9 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "_votingId",
-				"type": "uint256"
+				"type": "string"
 			}
 		],
 		"name": "getVoting",
@@ -156,11 +172,6 @@
 				"internalType": "uint256",
 				"name": "endTime",
 				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "voteCount",
-				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -182,17 +193,17 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "",
-				"type": "uint256"
+				"type": "string"
 			}
 		],
 		"name": "votings",
 		"outputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "votingId",
-				"type": "uint256"
+				"type": "string"
 			},
 			{
 				"internalType": "string",
@@ -207,11 +218,6 @@
 			{
 				"internalType": "uint256",
 				"name": "endTime",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "voteCount",
 				"type": "uint256"
 			}
 		],
