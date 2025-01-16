@@ -157,7 +157,7 @@ const Header: React.FC = () => {
                                             }
                                             to="/add-voting"
                                         >
-                                            Add-votes
+                                            Add new vote
                                         </NavLink>
                                     )}
                                 </li>

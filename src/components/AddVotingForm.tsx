@@ -16,7 +16,7 @@ interface State {
   title: string;
   description: string;
   options: Option[];
-  photo: File | null;
+  photo: string;
   endTime: string;
 }
 
@@ -26,7 +26,7 @@ class AddVotingForm extends Component<{}, State> {
     title: "",
     description: "",
     options: [{ optionText: "", description: "" }],
-    photo: null,
+    photo: "",
     endTime: "",
   };
 
@@ -36,11 +36,8 @@ class AddVotingForm extends Component<{}, State> {
   };
 
   handlePhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      this.setState({ photo: e.target.files[0] });
-    } else {
-      this.setState({ photo: null });
-    }
+    const { value } = e.target;
+    this.setState({ photo: value });
   };
 
   handleOptionChange = (
@@ -63,7 +60,8 @@ class AddVotingForm extends Component<{}, State> {
     this.setState((prevState) => {
       const updatedOptions = prevState.options.filter((_, i) => i !== index);
       return {
-        options: updatedOptions.length >= 1 ? updatedOptions : prevState.options,
+        options:
+          updatedOptions.length >= 1 ? updatedOptions : prevState.options,
       };
     });
   };
@@ -74,7 +72,7 @@ class AddVotingForm extends Component<{}, State> {
       title: "",
       description: "",
       options: [{ optionText: "", description: "" }],
-      photo: null,
+      photo: "",
       endTime: "",
     });
   };
@@ -122,7 +120,11 @@ class AddVotingForm extends Component<{}, State> {
       const provider = new ethers.BrowserProvider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
       const signer = await provider.getSigner();
-      const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+      const contract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        CONTRACT_ABI,
+        signer
+      );
 
       const optionsTexts = options.map((opt) => opt.optionText);
       const transaction = await contract.createVoting(
@@ -135,17 +137,14 @@ class AddVotingForm extends Component<{}, State> {
       alert("Transaction sent! Please confirm it in MetaMask.");
       const receipt = await transaction.wait();
 
-
       if (receipt.status === 1) {
-        
-        
-
         const payload = {
           title,
           description,
           options,
           endTime,
           contractAddress: receipt.hash,
+          imageUrl: photo,
         };
 
         const authToken = localStorage.getItem("authToken");
@@ -185,7 +184,10 @@ class AddVotingForm extends Component<{}, State> {
       <div className="add-voting-form">
         <div className="container">
           <div className="add-voting-form__container">
-            <form onSubmit={this.handleSubmit} className="add-voting-form__form">
+            <form
+              onSubmit={this.handleSubmit}
+              className="add-voting-form__form"
+            >
               <div className="add-voting-form__sections">
                 <div className="add-voting-form__section">
                   <h2 className="add-voting-form__title">Voting Information</h2>
@@ -204,7 +206,10 @@ class AddVotingForm extends Component<{}, State> {
                     />
                   </div>
                   <div className="add-voting-form__group">
-                    <label htmlFor="description" className="add-voting-form__label">
+                    <label
+                      htmlFor="description"
+                      className="add-voting-form__label"
+                    >
                       Description
                     </label>
                     <textarea
@@ -218,23 +223,19 @@ class AddVotingForm extends Component<{}, State> {
                   </div>
                   <div className="add-voting-form__group">
                     <label htmlFor="photo" className="add-voting-form__label">
-                      Upload Photo
-                    </label>
-                    <label
-                      className="add-voting-form__button-upload"
-                      htmlFor="photo"
-                    >
-                      {this.state.photo ? "Photo Selected" : "Choose a File"}
+                      Photo URL
                     </label>
                     <input
-                      type="file"
+                      type="text"
                       id="photo"
                       name="photo"
-                      accept="image/*"
-                      className="add-voting-form__input-file"
+                      placeholder="Enter photo URL"
+                      className="add-voting-form__input"
+                      value={this.state.photo || ""}
                       onChange={this.handlePhotoChange}
                     />
                   </div>
+
                   <div className="add-voting-form__group">
                     <label htmlFor="endTime" className="add-voting-form__label">
                       End Time
@@ -255,13 +256,19 @@ class AddVotingForm extends Component<{}, State> {
                   {this.state.options.map((option, index) => (
                     <div key={index} className="add-voting-form__option">
                       <div className="add-voting-form__group">
-                        <label className="add-voting-form__label">Option Title</label>
+                        <label className="add-voting-form__label">
+                          Option Title
+                        </label>
                         <input
                           type="text"
                           className="add-voting-form__input"
                           value={option.optionText}
                           onChange={(e) =>
-                            this.handleOptionChange(index, "optionText", e.target.value)
+                            this.handleOptionChange(
+                              index,
+                              "optionText",
+                              e.target.value
+                            )
                           }
                           required
                         />
@@ -274,7 +281,11 @@ class AddVotingForm extends Component<{}, State> {
                           className="add-voting-form__input"
                           value={option.description}
                           onChange={(e) =>
-                            this.handleOptionChange(index, "description", e.target.value)
+                            this.handleOptionChange(
+                              index,
+                              "description",
+                              e.target.value
+                            )
                           }
                           required
                         ></textarea>
@@ -298,8 +309,8 @@ class AddVotingForm extends Component<{}, State> {
                 </div>
               </div>
               <button className="add-voting-form__button-create" type="submit">
-                  Create a Poll
-                </button>
+                Create a Poll
+              </button>
             </form>
           </div>
         </div>

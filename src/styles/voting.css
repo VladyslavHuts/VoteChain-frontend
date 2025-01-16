@@ -1,3 +1,5 @@
+@import "@shoelace-style/shoelace/dist/themes/light.css";
+
 .voting {
     background: url("../assets/images/voting__background.png") no-repeat left / cover;
 }
@@ -277,4 +279,12 @@
 
 .voting__copy-btn:hover{
     background-color: #C800FF;
+}
+.voting__address {
+    white-space: nowrap;        /* Запобігає переносу тексту на новий рядок */
+    overflow: hidden;           /* Ховає текст, який не поміщається */
+    text-overflow: ellipsis;    /* Додає трикрапку замість обрізаного тексту */
+    max-width: 300px;           /* Задає максимальну ширину контейнера */
+    display: inline-block;      /* Застосовується для роботи ellipsis */
+    vertical-align: middle;     /* Вирівнює текст по центру вертикалі */
 }
