@@ -1,3 +1,5 @@
+@import "@shoelace-style/shoelace/dist/themes/light.css";
+
 .voting {
     background: url("../assets/images/voting__background.png") no-repeat left / cover;
 }
@@ -15,12 +17,16 @@
     border: solid 3px rgba(160, 160, 160, 0.5);
 }
 .voting__title {
+    width: 1000px;
     margin-top: 20px;
     margin-left: 30px;
     align-self: flex-start;
     font-weight: 700;
     font-size: 52px;
     color: #e8e8e8;
+}
+.voting__address{
+    padding-left: 30px;
 }
 .voting__dates {
     position: absolute;
@@ -236,4 +242,49 @@
 }
 .voting__bar-selected {
     background: linear-gradient(90deg, rgba(173, 0, 255, 1) 0%, rgba(255, 105, 255, 1) 100%);
+}
+.voting__bar-winner {
+    background: #be9050;
+  background: linear-gradient(
+    to right,
+    #cc9e5e,#f0ba5e
+  );
+}
+.voting__option.winner {
+    background: #554023;
+  background: linear-gradient(
+    to right,
+    #b18b57,#e7b051
+  );
+}
+
+
+.voting__info{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+}
+.voting__copy-btn {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #FF00B7;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.voting__copy-btn:hover{
+    background-color: #C800FF;
+}
+.voting__address {
+    white-space: nowrap;        /* Запобігає переносу тексту на новий рядок */
+    overflow: hidden;           /* Ховає текст, який не поміщається */
+    text-overflow: ellipsis;    /* Додає трикрапку замість обрізаного тексту */
+    max-width: 300px;           /* Задає максимальну ширину контейнера */
+    display: inline-block;      /* Застосовується для роботи ellipsis */
+    vertical-align: middle;     /* Вирівнює текст по центру вертикалі */
 }

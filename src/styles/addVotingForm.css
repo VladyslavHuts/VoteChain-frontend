@@ -4,17 +4,31 @@
 }
 .add-voting-form__container{
     margin: 0 auto;
-    max-width: 600px;
-    padding: 30px;
+    max-width: 90%;
+    padding: 40px;
     border: 3px solid #767676;
     border-radius: 30px;
     background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(160, 160, 160, 0.2) 100%);
 }
-.add-voting-form__section{
+.add-voting-form__sections{
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+    justify-content: space-between;
+}
+.add-voting-form__section {
     display: flex;
     flex-direction: column;
     gap: 30px;
     margin: 30px 0;
+    width: 500px;
+    height: 500px;
+    overflow-y: scroll; 
+    scrollbar-width: none; 
+    -ms-overflow-style: none; 
+}
+.add-voting-form__section::-webkit-scrollbar {
+    display: none; 
 }
 .add-voting-form__title{
     font-weight: 900;
@@ -104,5 +118,3 @@
 .add-voting-form__button-upload:hover {
     color: #0077ff;
 }
-
-

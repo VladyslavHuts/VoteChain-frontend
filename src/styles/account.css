@@ -141,7 +141,7 @@
     width: 80px;
     height: 80px;
 }
-.card__title{
+.card__title-account{
     height: 54px;
     font-weight: 700;
     font-size: 22px;
@@ -206,6 +206,22 @@
     background: rgba(18, 18, 18, 0.8);
     transform: scale(1.05);
     transition: all 0.3s ease;
+}
+.card__button--result {
+    border: 3px solid white;
+    border-radius: 14px;
+    width: 140px;
+    height: 40px;
+    background: #121212;
+    font-weight: 700;
+    font-size: 14px;
+    text-align: center;
+    transition: all 0.3s ease;
+    pointer-events: all;
+}
+.card__button--result:hover {
+    box-shadow: 0 0 20px rgba(0, 208, 255, 0.5);
+    transform: scale(1.05);
 }
 .account__addCard {
     width: 430px;

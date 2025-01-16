@@ -1,273 +1,322 @@
 import React, { Component, ChangeEvent, FormEvent } from "react";
 import "../styles/addVotingForm.css";
 import { v4 as uuidv4 } from "uuid";
+import { ethers } from "ethers";
+import CONTRACT_ABI from "./contractABI.json"; // Replace with your ABI file path
+
+const CONTRACT_ADDRESS = "0xb67b620f52fa7a39e6310b6fd426ce3bb128c2e2";
 
 interface Option {
-    title: string;
-    description: string;
+  optionText: string;
+  description: string;
 }
 
 interface State {
-    id: string;
-    title: string;
-    description: string;
-    options: Option[];
-    photo: File | null;
-    startDate: string;
-    endDate: string;
-    isClosed: boolean;
+  id: string;
+  title: string;
+  description: string;
+  options: Option[];
+  photo: string;
+  endTime: string;
 }
 
 class AddVotingForm extends Component<{}, State> {
-    state: State = {
-        id: uuidv4(),
-        title: "",
-        description: "",
-        options: [{ title: "", description: "" }, { title: "", description: "" }],
-        photo: null,
-        startDate: "",
-        endDate: "",
-        isClosed: true,
-    };
+  state: State = {
+    id: uuidv4(),
+    title: "",
+    description: "",
+    options: [{ optionText: "", description: "" }],
+    photo: "",
+    endTime: "",
+  };
 
-    handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        this.setState({ [name]: value } as unknown as Pick<State, keyof State>);
-    };
+  handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    this.setState({ [name]: value } as unknown as Pick<State, keyof State>);
+  };
 
-    handlePhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            this.setState({ photo: e.target.files[0] });
-        } else {
-            this.setState({ photo: null });
-        }
-    };
+  handlePhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    this.setState({ photo: value });
+  };
 
-    handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        this.setState({ [name]: value } as unknown as Pick<State, "startDate" | "endDate">);
+  handleOptionChange = (
+    index: number,
+    field: "optionText" | "description",
+    value: string
+  ) => {
+    const updatedOptions = [...this.state.options];
+    updatedOptions[index][field] = value;
+    this.setState({ options: updatedOptions });
+  };
 
-        if (name === "startDate") {
-            const currentDate = new Date().toISOString().split("T")[0];
-            this.setState({ isClosed: value > currentDate });
-        }
-    };
+  handleAddOption = () => {
+    this.setState((prevState) => ({
+      options: [...prevState.options, { optionText: "", description: "" }],
+    }));
+  };
 
-    handleOptionChange = (index: number, field: "title" | "description", value: string) => {
-        const updatedOptions = [...this.state.options];
-        updatedOptions[index][field] = value;
-        this.setState({ options: updatedOptions });
-    };
+  handleRemoveOption = (index: number) => {
+    this.setState((prevState) => {
+      const updatedOptions = prevState.options.filter((_, i) => i !== index);
+      return {
+        options:
+          updatedOptions.length >= 1 ? updatedOptions : prevState.options,
+      };
+    });
+  };
 
-    handleAddOption = () => {
-        this.setState((prevState) => ({
-            options: [...prevState.options, { title: "", description: "" }],
-        }));
-    };
+  resetForm = () => {
+    this.setState({
+      id: uuidv4(),
+      title: "",
+      description: "",
+      options: [{ optionText: "", description: "" }],
+      photo: "",
+      endTime: "",
+    });
+  };
 
-    handleRemoveOption = (index: number) => {
-        this.setState((prevState) => {
-            const updatedOptions = prevState.options.filter((_, i) => i !== index);
-            return {
-                options: updatedOptions.length >= 2 ? updatedOptions : prevState.options,
-            };
-        });
-    };
+  handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    this.setState({ [name]: value } as unknown as Pick<State, "endTime">);
 
-    resetForm = () => {
-        this.setState({
-            id: uuidv4(),
-            title: "",
-            description: "",
-            options: [{ title: "", description: "" }, { title: "", description: "" }],
-            photo: null,
-            startDate: "",
-            endDate: "",
-            isClosed: true,
-        });
-    };
+    if (name === "endTime") {
+      const currentDateTime = new Date().toISOString().slice(0, 16);
+      if (value < currentDateTime) {
+        alert("End time must not be earlier than the current time.");
+      }
+    }
+  };
 
-    handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+  handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-        const { id, title, description, options, photo, startDate, endDate, isClosed } = this.state;
+    const { title, description, options, photo, endTime } = this.state;
 
-        if (!title.trim() || !description.trim()) {
-            alert("Title and description are required.");
-            return;
-        }
+    if (!title.trim() || !description.trim()) {
+      alert("Title and description are required.");
+      return;
+    }
 
-        const currentDate = new Date().toISOString().split("T")[0];
-        if (!startDate || startDate < currentDate) {
-            alert("Start date must not be earlier than today.");
-            return;
-        }
+    if (options.length < 2) {
+      alert("At least 2 options are required.");
+      return;
+    }
 
-        if (!endDate || endDate <= startDate) {
-            alert("End date must be after the start date.");
-            return;
-        }
+    if (
+      options.some((opt) => !opt.optionText.trim() || !opt.description.trim())
+    ) {
+      alert("All options must have a title and description.");
+      return;
+    }
 
-        if (options.length < 2) {
-            alert("At least 2 options are required.");
-            return;
-        }
+    if (!endTime) {
+      alert("End time must be provided.");
+      return;
+    }
 
-        if (options.some((opt) => !opt.title.trim() || !opt.description.trim())) {
-            alert("All options must have a title and description.");
-            return;
-        }
+    try {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = await provider.getSigner();
+      const contract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        CONTRACT_ABI,
+        signer
+      );
 
-        if (!photo) {
-            alert("Please upload a photo.");
-            return;
-        }
+      const optionsTexts = options.map((opt) => opt.optionText);
+      const transaction = await contract.createVoting(
+        title,
+        description,
+        optionsTexts,
+        Math.floor(new Date(endTime).getTime() / 1000)
+      );
 
-        const payload = new FormData();
-        payload.append("id", id);
-        payload.append("title", title);
-        payload.append("description", description);
-        payload.append("photo", photo);
-        payload.append("startDate", startDate);
-        payload.append("endDate", endDate);
-        payload.append("isClosed", JSON.stringify(isClosed));
-        payload.append("options", JSON.stringify(options));
+      alert("Transaction sent! Please confirm it in MetaMask.");
+      const receipt = await transaction.wait();
 
-        console.log("Data to be sent:", payload);
+      if (receipt.status === 1) {
+        const payload = {
+          title,
+          description,
+          options,
+          endTime,
+          contractAddress: receipt.hash,
+          imageUrl: photo,
+        };
+
+        const authToken = localStorage.getItem("authToken");
 
         try {
-            alert("Form submitted successfully! Check the console for FormData.");
-            this.resetForm();
-        } catch (error) {
-            console.error("Error:", error);
-            alert("An error occurred while submitting the form.");
-        }
-    };
+          const response = await fetch("http://localhost:80/votes/create", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify(payload),
+          });
 
-    render() {
-        return (
-            <div className="add-voting-form">
-                <div className="container">
-                    <div className="add-voting-form__container">
-                        <form onSubmit={this.handleSubmit} className="add-voting-form__form">
-                            <div className="add-voting-form__section">
-                                <h2 className="add-voting-form__title">Voting Information</h2>
-                                <div className="add-voting-form__group">
-                                    <label htmlFor="title" className="add-voting-form__label">Title</label>
-                                    <input
-                                        type="text"
-                                        id="title"
-                                        name="title"
-                                        className="add-voting-form__input"
-                                        value={this.state.title}
-                                        onChange={this.handleChange}
-                                        required
-                                    />
-                                </div>
-                                <div className="add-voting-form__group">
-                                    <label htmlFor="description" className="add-voting-form__label">Description</label>
-                                    <textarea
-                                        id="description"
-                                        name="description"
-                                        className="add-voting-form__input"
-                                        value={this.state.description}
-                                        onChange={this.handleChange}
-                                        required
-                                    ></textarea>
-                                </div>
-                                <div className="add-voting-form__group">
-                                    <label htmlFor="photo" className="add-voting-form__label">Upload Photo</label>
-                                    <label className="add-voting-form__button-upload" htmlFor="photo">
-                                        {this.state.photo ? "Photo Selected" : "Choose a File"}
-                                    </label>
-                                    <input
-                                        type="file"
-                                        id="photo"
-                                        name="photo"
-                                        accept="image/*"
-                                        className="add-voting-form__input-file"
-                                        onChange={this.handlePhotoChange}
-                                        required
-                                    />
-                                </div>
-                                <div className="add-voting-form__group">
-                                    <label htmlFor="startDate" className="add-voting-form__label">Start Date</label>
-                                    <input
-                                        type="date"
-                                        id="startDate"
-                                        name="startDate"
-                                        className="add-voting-form__input"
-                                        value={this.state.startDate}
-                                        onChange={this.handleDateChange}
-                                        required
-                                    />
-                                </div>
-                                <div className="add-voting-form__group">
-                                    <label htmlFor="endDate" className="add-voting-form__label">End Date</label>
-                                    <input
-                                        type="date"
-                                        id="endDate"
-                                        name="endDate"
-                                        className="add-voting-form__input"
-                                        value={this.state.endDate}
-                                        onChange={this.handleDateChange}
-                                        required
-                                    />
-                                </div>
-                            </div>
-                            <div className="add-voting-form__section">
-                                <h2 className="add-voting-form__title">Election Settings</h2>
-                                {this.state.options.map((option, index) => (
-                                    <div key={index} className="add-voting-form__option">
-                                        <div className="add-voting-form__group">
-                                            <label className="add-voting-form__label">Option Title</label>
-                                            <input
-                                                type="text"
-                                                className="add-voting-form__input"
-                                                value={option.title}
-                                                onChange={(e) =>
-                                                    this.handleOptionChange(index, "title", e.target.value)
-                                                }
-                                                required
-                                            />
-                                        </div>
-                                        <div className="add-voting-form__group">
-                                            <label className="add-voting-form__label">Option Description</label>
-                                            <textarea
-                                                className="add-voting-form__input"
-                                                value={option.description}
-                                                onChange={(e) =>
-                                                    this.handleOptionChange(index, "description", e.target.value)
-                                                }
-                                                required
-                                            ></textarea>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            className="add-voting-form__remove-option"
-                                            onClick={() => this.handleRemoveOption(index)}
-                                        >
-                                            Remove Option
-                                        </button>
-                                    </div>
-                                ))}
-                                <button
-                                    type="button"
-                                    className="add-voting-form__add-option"
-                                    onClick={this.handleAddOption}
-                                >
-                                    + Add Option
-                                </button>
-                            </div>
-                            <button className="add-voting-form__button-create" type="submit">
-                                Create a Poll
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        );
+          const data = await response.json();
+          if (data.success) {
+            alert("Voting created successfully!");
+            this.resetForm();
+          } else {
+            alert(data.message);
+          }
+        } catch (error) {
+          console.error("Error creating voting in backend:", error);
+          alert("An error occurred while creating the voting in backend.");
+        }
+      } else {
+        alert("Transaction failed.");
+      }
+    } catch (error) {
+      console.error("Error interacting with the contract:", error);
+      alert("An error occurred while creating the voting.");
     }
+  };
+
+  render() {
+    return (
+      <div className="add-voting-form">
+        <div className="container">
+          <div className="add-voting-form__container">
+            <form
+              onSubmit={this.handleSubmit}
+              className="add-voting-form__form"
+            >
+              <div className="add-voting-form__sections">
+                <div className="add-voting-form__section">
+                  <h2 className="add-voting-form__title">Voting Information</h2>
+                  <div className="add-voting-form__group">
+                    <label htmlFor="title" className="add-voting-form__label">
+                      Title
+                    </label>
+                    <input
+                      type="text"
+                      id="title"
+                      name="title"
+                      className="add-voting-form__input"
+                      value={this.state.title}
+                      onChange={this.handleChange}
+                      required
+                    />
+                  </div>
+                  <div className="add-voting-form__group">
+                    <label
+                      htmlFor="description"
+                      className="add-voting-form__label"
+                    >
+                      Description
+                    </label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      className="add-voting-form__input"
+                      value={this.state.description}
+                      onChange={this.handleChange}
+                      required
+                    ></textarea>
+                  </div>
+                  <div className="add-voting-form__group">
+                    <label htmlFor="photo" className="add-voting-form__label">
+                      Photo URL
+                    </label>
+                    <input
+                      type="text"
+                      id="photo"
+                      name="photo"
+                      placeholder="Enter photo URL"
+                      className="add-voting-form__input"
+                      value={this.state.photo || ""}
+                      onChange={this.handlePhotoChange}
+                    />
+                  </div>
+
+                  <div className="add-voting-form__group">
+                    <label htmlFor="endTime" className="add-voting-form__label">
+                      End Time
+                    </label>
+                    <input
+                      type="datetime-local"
+                      id="endTime"
+                      name="endTime"
+                      className="add-voting-form__input"
+                      value={this.state.endTime}
+                      onChange={this.handleDateChange}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="add-voting-form__section">
+                  <h2 className="add-voting-form__title">Election Settings</h2>
+                  {this.state.options.map((option, index) => (
+                    <div key={index} className="add-voting-form__option">
+                      <div className="add-voting-form__group">
+                        <label className="add-voting-form__label">
+                          Option Title
+                        </label>
+                        <input
+                          type="text"
+                          className="add-voting-form__input"
+                          value={option.optionText}
+                          onChange={(e) =>
+                            this.handleOptionChange(
+                              index,
+                              "optionText",
+                              e.target.value
+                            )
+                          }
+                          required
+                        />
+                      </div>
+                      <div className="add-voting-form__group">
+                        <label className="add-voting-form__label">
+                          Option Description
+                        </label>
+                        <textarea
+                          className="add-voting-form__input"
+                          value={option.description}
+                          onChange={(e) =>
+                            this.handleOptionChange(
+                              index,
+                              "description",
+                              e.target.value
+                            )
+                          }
+                          required
+                        ></textarea>
+                      </div>
+                      <button
+                        type="button"
+                        className="add-voting-form__remove-option"
+                        onClick={() => this.handleRemoveOption(index)}
+                      >
+                        Remove Option
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    className="add-voting-form__add-option"
+                    onClick={this.handleAddOption}
+                  >
+                    + Add Option
+                  </button>
+                </div>
+              </div>
+              <button className="add-voting-form__button-create" type="submit">
+                Create a Poll
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
 
 export default AddVotingForm;

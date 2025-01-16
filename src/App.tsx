@@ -10,6 +10,7 @@ import NotFound from './components/NotFound';
 import About from "./components/About";
 import Functionality from "./components/Functionality";
 import AddVoting from "./pages/AddVoting";
+import PhotoUploadTest from './components/test';
 
 const App: React.FC<{}> = () => {
     return (
@@ -24,6 +25,7 @@ const App: React.FC<{}> = () => {
                     <Route path="/voting/:id" element={<Voting />} />
                     <Route path="/about" element={<About />} />
                     <Route path="/how-it-works" element={<Functionality />} />
+                    <Route path="/test" element={<PhotoUploadTest />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
                 <Footer />

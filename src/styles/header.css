@@ -67,7 +67,6 @@
     background-color: #EE00EE;
     animation: moveUnderline 0.3s ease-out;
 }
-
 @keyframes moveUnderline {
     0% {
         transform: scaleX(0);
