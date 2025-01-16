@@ -186,118 +186,120 @@ class AddVotingForm extends Component<{}, State> {
         <div className="container">
           <div className="add-voting-form__container">
             <form onSubmit={this.handleSubmit} className="add-voting-form__form">
-              <div className="add-voting-form__section">
-                <h2 className="add-voting-form__title">Voting Information</h2>
-                <div className="add-voting-form__group">
-                  <label htmlFor="title" className="add-voting-form__label">
-                    Title
-                  </label>
-                  <input
-                    type="text"
-                    id="title"
-                    name="title"
-                    className="add-voting-form__input"
-                    value={this.state.title}
-                    onChange={this.handleChange}
-                    required
-                  />
-                </div>
-                <div className="add-voting-form__group">
-                  <label htmlFor="description" className="add-voting-form__label">
-                    Description
-                  </label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    className="add-voting-form__input"
-                    value={this.state.description}
-                    onChange={this.handleChange}
-                    required
-                  ></textarea>
-                </div>
-                <div className="add-voting-form__group">
-                  <label htmlFor="photo" className="add-voting-form__label">
-                    Upload Photo
-                  </label>
-                  <label
-                    className="add-voting-form__button-upload"
-                    htmlFor="photo"
-                  >
-                    {this.state.photo ? "Photo Selected" : "Choose a File"}
-                  </label>
-                  <input
-                    type="file"
-                    id="photo"
-                    name="photo"
-                    accept="image/*"
-                    className="add-voting-form__input-file"
-                    onChange={this.handlePhotoChange}
-                  />
-                </div>
-                <div className="add-voting-form__group">
-                  <label htmlFor="endTime" className="add-voting-form__label">
-                    End Time
-                  </label>
-                  <input
-                    type="datetime-local"
-                    id="endTime"
-                    name="endTime"
-                    className="add-voting-form__input"
-                    value={this.state.endTime}
-                    onChange={this.handleDateChange}
-                    required
-                  />
-                </div>
-              </div>
-              <div className="add-voting-form__section">
-                <h2 className="add-voting-form__title">Election Settings</h2>
-                {this.state.options.map((option, index) => (
-                  <div key={index} className="add-voting-form__option">
-                    <div className="add-voting-form__group">
-                      <label className="add-voting-form__label">Option Title</label>
-                      <input
-                        type="text"
-                        className="add-voting-form__input"
-                        value={option.optionText}
-                        onChange={(e) =>
-                          this.handleOptionChange(index, "optionText", e.target.value)
-                        }
-                        required
-                      />
-                    </div>
-                    <div className="add-voting-form__group">
-                      <label className="add-voting-form__label">
-                        Option Description
-                      </label>
-                      <textarea
-                        className="add-voting-form__input"
-                        value={option.description}
-                        onChange={(e) =>
-                          this.handleOptionChange(index, "description", e.target.value)
-                        }
-                        required
-                      ></textarea>
-                    </div>
-                    <button
-                      type="button"
-                      className="add-voting-form__remove-option"
-                      onClick={() => this.handleRemoveOption(index)}
-                    >
-                      Remove Option
-                    </button>
+              <div className="add-voting-form__sections">
+                <div className="add-voting-form__section">
+                  <h2 className="add-voting-form__title">Voting Information</h2>
+                  <div className="add-voting-form__group">
+                    <label htmlFor="title" className="add-voting-form__label">
+                      Title
+                    </label>
+                    <input
+                      type="text"
+                      id="title"
+                      name="title"
+                      className="add-voting-form__input"
+                      value={this.state.title}
+                      onChange={this.handleChange}
+                      required
+                    />
                   </div>
-                ))}
-                <button
-                  type="button"
-                  className="add-voting-form__add-option"
-                  onClick={this.handleAddOption}
-                >
-                  + Add Option
-                </button>
+                  <div className="add-voting-form__group">
+                    <label htmlFor="description" className="add-voting-form__label">
+                      Description
+                    </label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      className="add-voting-form__input"
+                      value={this.state.description}
+                      onChange={this.handleChange}
+                      required
+                    ></textarea>
+                  </div>
+                  <div className="add-voting-form__group">
+                    <label htmlFor="photo" className="add-voting-form__label">
+                      Upload Photo
+                    </label>
+                    <label
+                      className="add-voting-form__button-upload"
+                      htmlFor="photo"
+                    >
+                      {this.state.photo ? "Photo Selected" : "Choose a File"}
+                    </label>
+                    <input
+                      type="file"
+                      id="photo"
+                      name="photo"
+                      accept="image/*"
+                      className="add-voting-form__input-file"
+                      onChange={this.handlePhotoChange}
+                    />
+                  </div>
+                  <div className="add-voting-form__group">
+                    <label htmlFor="endTime" className="add-voting-form__label">
+                      End Time
+                    </label>
+                    <input
+                      type="datetime-local"
+                      id="endTime"
+                      name="endTime"
+                      className="add-voting-form__input"
+                      value={this.state.endTime}
+                      onChange={this.handleDateChange}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="add-voting-form__section">
+                  <h2 className="add-voting-form__title">Election Settings</h2>
+                  {this.state.options.map((option, index) => (
+                    <div key={index} className="add-voting-form__option">
+                      <div className="add-voting-form__group">
+                        <label className="add-voting-form__label">Option Title</label>
+                        <input
+                          type="text"
+                          className="add-voting-form__input"
+                          value={option.optionText}
+                          onChange={(e) =>
+                            this.handleOptionChange(index, "optionText", e.target.value)
+                          }
+                          required
+                        />
+                      </div>
+                      <div className="add-voting-form__group">
+                        <label className="add-voting-form__label">
+                          Option Description
+                        </label>
+                        <textarea
+                          className="add-voting-form__input"
+                          value={option.description}
+                          onChange={(e) =>
+                            this.handleOptionChange(index, "description", e.target.value)
+                          }
+                          required
+                        ></textarea>
+                      </div>
+                      <button
+                        type="button"
+                        className="add-voting-form__remove-option"
+                        onClick={() => this.handleRemoveOption(index)}
+                      >
+                        Remove Option
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    className="add-voting-form__add-option"
+                    onClick={this.handleAddOption}
+                  >
+                    + Add Option
+                  </button>
+                </div>
               </div>
               <button className="add-voting-form__button-create" type="submit">
-                Create a Poll
-              </button>
+                  Create a Poll
+                </button>
             </form>
           </div>
         </div>

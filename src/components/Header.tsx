@@ -149,6 +149,18 @@ const Header: React.FC = () => {
                                         Active votes
                                     </NavLink>
                                 </li>
+                                <li className="header__item">
+                                    {isLoggedIn && (
+                                        <NavLink
+                                            className={({ isActive }) =>
+                                                isActive ? "header__link active" : "header__link"
+                                            }
+                                            to="/add-voting"
+                                        >
+                                            Add-votes
+                                        </NavLink>
+                                    )}
+                                </li>
                             </ul>
                         </nav>
                     </div>

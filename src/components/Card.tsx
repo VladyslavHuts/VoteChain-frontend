@@ -38,7 +38,7 @@ const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, isClosed,
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [voteData, setVoteData] = useState<Vote | null>(null);
     const navigate = useNavigate();
-
+    imageUrl = "https://cdn-icons-png.flaticon.com/512/9501/9501143.png";
     useEffect(() => {
         const fetchVoteData = async () => {
             try {

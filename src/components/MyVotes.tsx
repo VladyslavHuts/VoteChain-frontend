@@ -31,7 +31,7 @@ export const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, is
         <div className={`card ${isClosed ? "card--closed" : ""}`}>
             {isClosed && <div className="card__overlay"></div>}
             <div className="card__header">
-                <h2 className="card__title">{title}</h2>
+                <h2 className="card__title-account">{title}</h2>
             </div>
             <div className="card__main">
                 <div className="card__info">

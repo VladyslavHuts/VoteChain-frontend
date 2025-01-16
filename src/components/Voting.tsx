@@ -205,8 +205,25 @@ class Voting extends Component<VotingProps, VotingState> {
             <div className="container">
                 <div className="voting__container">
                     <div className="voting__window">
-                        <p className="voting__title">{votingData.title}</p>
-                        <p className="voting__description">{votingData.description}</p>
+                    <p className="voting__title">{votingData.title}</p>
+                        <div className="voting__info">
+                            <p className="voting__address">
+                                Address: <span id="address"> gfsudyygfsdyg4754yc87tcb4t4676tbr6v4t64b67676vb4b4v66b4vrt7647tbv</span>
+                            </p>
+                            <button
+                                className="voting__copy-btn"
+                                onClick={() => {
+                                    const addressElement = document.getElementById("address");
+                                    if (addressElement) {
+                                        const address = addressElement.textContent || "";
+                                        navigator.clipboard.writeText(address)
+                                           
+                                    }
+                                }}
+                            >
+                                Copy
+                            </button>
+                        </div>
                         <div className="voting__dates">
                             <p className="voting__date">
                                 Start Date: <span id="start__date">{votingData.startDate}</span>
@@ -215,7 +232,6 @@ class Voting extends Component<VotingProps, VotingState> {
                                 End Date: <span id="end__date">{votingData.endDate}</span>
                             </p>
                         </div>
-
                         <form className="voting__form" onSubmit={this.handleVote}>
                             <div className="voting__content">
                                 <div className="voting__graph">
