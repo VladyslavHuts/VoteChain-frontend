@@ -21,6 +21,7 @@ interface VotingState {
     hoveredIndex: number | null;
     voteDetails: { optionId: string; optionTitle: string; optionDescription: string } | null;
     winnerId: string | null;
+    isClosed: boolean;
 }
 
 interface VotingProps {
@@ -40,6 +41,7 @@ class Voting extends Component<VotingProps, VotingState> {
             hoveredIndex: null,
             voteDetails: null,
             winnerId: null,
+            isClosed: false,
         };
     }
 
@@ -96,6 +98,9 @@ class Voting extends Component<VotingProps, VotingState> {
                     id: option.optionId,
                 }));
 
+                const currentDate = new Date();
+                const endDate = new Date(voting.endTime);
+
                 this.setState({
                     votingData: {
                         title: voting.title,
@@ -106,6 +111,7 @@ class Voting extends Component<VotingProps, VotingState> {
                     },
                     options: formattedOptions,
                     winnerId: voting.winner || null,
+                    isClosed: currentDate > endDate,
                 });
             })
             .catch((error) => {
@@ -124,35 +130,35 @@ class Voting extends Component<VotingProps, VotingState> {
         event.preventDefault();
         const { selectedOption } = this.state;
         const { id } = this.props;
-    
+
         if (!selectedOption) {
             alert("Please select an option before voting.");
             return;
         }
-    
+
         try {
             // Підключення до MetaMask
             const provider = new ethers.BrowserProvider(window.ethereum);
             await provider.send("eth_requestAccounts", []);
             const signer = await provider.getSigner();
             const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-    
+
             // Відправка транзакції до смартконтракту
             const transaction = await contract.vote(id, selectedOption);
-    
+
             alert("Transaction sent! Please confirm it in MetaMask.");
             const receipt = await transaction.wait(); // Очікуємо підтвердження транзакції
-    
+
             const transactionHash = receipt.hash;
-           
-    
+
+
             // Після успішної транзакції відправляємо дані на бекенд
             const authToken = localStorage.getItem("authToken");
             if (!authToken) {
                 console.error("No authToken found in localStorage.");
                 return;
             }
-    
+
             const response = await fetch(`http://localhost:80/votes/${id}/vote/${selectedOption}`, {
                 method: "POST",
                 headers: {
@@ -163,20 +169,20 @@ class Voting extends Component<VotingProps, VotingState> {
                     transactionAddress: transactionHash,
                 }),
             });
-    
+
             if (!response.ok) {
                 console.error("Server error:", response.status, response.statusText);
                 alert("An error occurred while submitting your vote. Please try again.");
                 return;
             }
-    
+
             const data = await response.json();
-            
-    
+
+
             // Перевірка наявності повідомлення про успіх
             if (data.message === "Vote recorded successfully") {
                 this.setState({ hasVoted: true });
-                
+
                 window.location.reload(); // Перезавантаження сторінки
             } else {
                 console.error("Unexpected server response:", data);
@@ -187,11 +193,11 @@ class Voting extends Component<VotingProps, VotingState> {
             alert("An error occurred during the voting process.");
         }
     };
-    
-    
+
+
 
     render() {
-        const { expandedIndex, votingData, options, selectedOption, hasVoted, hoveredIndex, winnerId } = this.state;
+        const { expandedIndex, votingData, options, selectedOption, hasVoted, hoveredIndex, winnerId, isClosed } = this.state;
 
         if (!votingData) {
             return <p>Loading voting data...</p>;
@@ -205,7 +211,7 @@ class Voting extends Component<VotingProps, VotingState> {
             <div className="container">
                 <div className="voting__container">
                     <div className="voting__window">
-                    <p className="voting__title">{votingData.title}</p>
+                        <p className="voting__title">{votingData.title}</p>
                         <div className="voting__info">
                             <p className="voting__address">
                                 Address: <span id="address"> gfsudyygfsdyg4754yc87tcb4t4676tbr6v4t64b67676vb4b4v66b4vrt7647tbv</span>
@@ -217,7 +223,7 @@ class Voting extends Component<VotingProps, VotingState> {
                                     if (addressElement) {
                                         const address = addressElement.textContent || "";
                                         navigator.clipboard.writeText(address)
-                                           
+
                                     }
                                 }}
                             >
@@ -253,8 +259,8 @@ class Voting extends Component<VotingProps, VotingState> {
                                                             winnerId === option.id
                                                                 ? 'voting__bar-winner'
                                                                 : hasVoted && selectedOption === option.id
-                                                                ? 'voting__bar-selected'
-                                                                : ''
+                                                                    ? 'voting__bar-selected'
+                                                                    : ''
                                                         }`}
                                                         style={{
                                                             '--target-width': `${scaledWidth}%`,
@@ -281,8 +287,8 @@ class Voting extends Component<VotingProps, VotingState> {
                                                 winnerId === option.id
                                                     ? 'winner'
                                                     : selectedOption === option.id && hasVoted
-                                                    ? 'selected'
-                                                    : ''
+                                                        ? 'selected'
+                                                        : ''
                                             } ${expandedIndex === index ? 'expanded' : ''}`}
                                         >
                                             <div className="voting__header">
@@ -306,7 +312,7 @@ class Voting extends Component<VotingProps, VotingState> {
                                                     </svg>
                                                 </div>
                                                 <span>{option.name}</span>
-                                                {!hasVoted && (
+                                                {!hasVoted && !isClosed && (
                                                     <input
                                                         type="radio"
                                                         name="vote"
@@ -328,7 +334,7 @@ class Voting extends Component<VotingProps, VotingState> {
                                     ))}
                                 </ul>
                             </div>
-                            {!hasVoted && (
+                            {!hasVoted && !isClosed && (
                                 <button className="voting__btn" type="submit">
                                     Vote
                                 </button>

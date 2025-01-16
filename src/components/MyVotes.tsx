@@ -27,6 +27,10 @@ export interface CardProps {
 export const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, isClosed, onDetails }) => {
     const navigate = useNavigate();
 
+    const handleResult = () => {
+        navigate(`/Voting/${id}`);
+    };
+
     return (
         <div className={`card ${isClosed ? "card--closed" : ""}`}>
             {isClosed && <div className="card__overlay"></div>}
@@ -39,22 +43,31 @@ export const Card: React.FC<CardProps> = ({ id, title, description, imageUrl, is
                     <p className="card__description">{description}</p>
                 </div>
             </div>
-            <div className="card__actions">
-                <button
-                    className="card__button card__button--vote"
-                    onClick={() => !isClosed && navigate(`/Voting/${id}`)}
-                    disabled={isClosed}
-                >
-                    Vote
-                </button>
-                <button
-                    className="card__button card__button--details"
-                    onClick={onDetails}
-                    disabled={isClosed}
-                >
-                    Details
-                </button>
-            </div>
+            {!isClosed && (
+                <div className="card__actions">
+                    <button
+                        className="card__button card__button--vote"
+                        onClick={() => !isClosed && navigate(`/Voting/${id}`)}
+                        disabled={isClosed}
+                    >
+                        Vote
+                    </button>
+                    <button
+                        className="card__button card__button--details"
+                        onClick={onDetails}
+                        disabled={isClosed}
+                    >
+                        Details
+                    </button>
+                </div>
+            )}
+            {isClosed && (
+                <div className="card__actions">
+                    <button className="card__button card__button--result" onClick={handleResult}>
+                        Results
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
